@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Socket.IO chat</title>
+
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+              crossorigin="anonymous">
+
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body { font: 13px Helvetica, Arial; }
+
+            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+
+            form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+
+            form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+
+            #messages li { padding: 5px 10px; }
+
+            #messages li:nth-child(odd) { background: #EEE; }
+
+            #messages { margin-bottom: 40px }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-md-2">
+                    <ul id="users"></ul>
+                </div>
+                <div class="col-12 col-md-10">
+                    <ul id="messages"></ul>
+                </div>
+            </div>
+        </div>
+        <form action="">
+            <input id="m" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+
+        <!-- Modal -->
+        <div class="modal fade" id="usermodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Elige un nombre de usuario</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <input id="username" type="text" class="form-control" placeholder="Username">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="connect()">Conectar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
+        <script>
+            $(function () {
+                $('#usermodal').modal('toggle');
+            });
+
+
+            function connect() {
+                $('#usermodal').modal('toggle');
+                color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
+                username = $('#username').val();
+                colored_name = '<strong style="color: ' + color + '">' + username + '</strong>';
+
+                var socket = io();
+                socket.emit('new user', colored_name);
+
+                $('form').submit(function () {
+                    if ($('#m').val().trim().length > 0) {
+                        socket.emit('chat message', colored_name + ': ' + $('#m').val().trim());
+                        $('#m').val('');
+                    }
+                    return false;
+                });
+
+                socket.on('chat message', function (msg) {
+                    $('#messages').append($('<li>').html(msg));
+                    window.scrollTo(0, document.body.scrollHeight);
+                });
+
+                socket.on('connected', function (data) {
+                    userelem = $('#users');
+                    userelem.html('');
+                    for (let user of data.userlist) {
+                        userelem.append($('<li>').html(user));
+                    }
+                    $('#messages').append($('<li>').html(data.user + ' se ha conectado'));
+                    window.scrollTo(0, document.body.scrollHeight);
+                });
+
+                socket.on('writing', )
+            }
+        </script>
+    </body>
+</html>
