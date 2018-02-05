@@ -4,7 +4,8 @@
   "description": "my first socket.io app",
   "dependencies": {
     "express": "^4.15.2",
-    "nodemon": "^1.14.11",
+    "nodemon": "^1.14.12",
+    "pokemon": "^1.2.2",
     "socket.io": "^1.7.3"
   },
   "scripts": {
