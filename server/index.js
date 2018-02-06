@@ -14,12 +14,13 @@ app.use(express.static(path.join(__dirname, 'public')));
   res.sendFile(__dirname + '/index.html');
 });*/
 
-var userlist = [];
+var userslist = [];
 /*
   {
     uuid: '0000-0000-0000',
     name: 'Username',
     color: '#FFFFFF',
+    avatar: 'http://...'
   }
 */
 var matches = [];
@@ -33,6 +34,7 @@ var matches = [];
         uuid: '0000-0000-0000',
         name: 'Username',
         color: '#FFFFFF',
+        avatar: 'http://...',
         points: 0
       }
     ]
@@ -41,33 +43,34 @@ var matches = [];
 
 
 io.on('connection', function (socket) {
-  console.log("user connected");
 
   socket.on('new-user', function (userdata) {
-      console.log(userdata);
-
+      console.log('User connected', userdata);
       if (!userdata) return;
-      if (userdata.hasOwnProperty('uuid') && userdata.hasOwnProperty('name') && userdata.hasOwnProperty('color')) {
-        userlist.push(userdata);
-        io.emit('new-user-connected', userdata);
+      if (userdata.hasOwnProperty('uuid') && userdata.hasOwnProperty('name')
+        && userdata.hasOwnProperty('color') && userdata.hasOwnProperty('avatar')) {
+        userslist.push(userdata);
+        io.emit('user-connected', userdata);
+        io.emit('users-list', userslist);
+
+        /* User Connected on Global Room*/
+        socket.on('chat-message', function (msg) {
+          console.log('Message received', msg);
+          if (msg.length > 0) {
+            io.emit('chat-message', {user: userdata, message: msg});
+          }
+        });
+
+        /* User Disconnects */
+        socket.on('disconnect', function () {
+          userslist = userslist.filter(user => user.uuid !== userdata.uuid);
+
+          io.emit('user-disconnected', userdata);
+          io.emit('users-list', userslist);
+        });
       }
     }
   );
-
-  socket.on('connectuser', function (userdata) {
-    userlist.push(username);
-    io.emit('connected', {user: username, userlist: userlist});
-
-    socket.on('chat message', function (msg) {
-      if (msg.length > 0) {
-        io.emit('chat message', msg);
-      }
-    });
-
-    socket.on('writing', function (user) {
-      io.emit('writing', user);
-    });
-  });
 });
 
 http.listen(port, function () {

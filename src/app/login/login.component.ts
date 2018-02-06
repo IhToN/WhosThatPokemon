@@ -3,6 +3,9 @@ import {slideToLeft} from '../../router.animations';
 import {NavigationEnd, Router} from '@angular/router';
 import {GameService} from '../game.service';
 
+declare var jquery: any;
+declare var $: any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -12,7 +15,16 @@ import {GameService} from '../game.service';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private router: Router, private gameserv: GameService) {
+  logged = false;
+
+  username;
+  avatarid = 0;
+  message = '';
+
+  userslist: any;
+  messages = [];
+
+  constructor(private router: Router, public gameserv: GameService) {
   }
 
   ngOnInit() {
@@ -24,14 +36,31 @@ export class LoginComponent implements OnInit {
       const scrollToTop = window.setInterval(function () {
         const pos = window.pageYOffset;
         if (pos > 0) {
-          window.scrollTo(0, pos - 20); // how far to scroll on each step
+          window.scrollTo(0, pos - 20);
         } else {
           window.clearInterval(scrollToTop);
         }
-      }, 16); // how fast to scroll (this equals roughly 60 fps)
+      }, 16);
     });
 
-    this.gameserv.login('test');
+    this.gameserv.getUsers().subscribe((userslist) => {
+      this.userslist = userslist;
+    });
+
+    this.gameserv.getMessages().subscribe((msgdata) => {
+      this.messages.push(msgdata);
+    });
   }
 
+  login() {
+    this.gameserv.login(this.username, 'assets/sprites/pokemon/' + this.avatarid + '.png');
+    this.logged = true;
+  }
+
+  sendMessage() {
+    if (this.message.length > 0 && this.message.length <= this.gameserv.messagelength) {
+      this.gameserv.sendMessage(this.message);
+      this.message = '';
+    }
+  }
 }

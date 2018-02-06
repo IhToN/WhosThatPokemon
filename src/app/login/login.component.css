@@ -1,0 +1,15 @@
+.avatar img {
+  width: 100%;
+}
+
+.messages {
+  height: 300px;
+}
+
+.messages .message {
+  word-break: break-all;
+}
+
+.user img {
+  width: 12%;
+}

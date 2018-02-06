@@ -1,5 +1,96 @@
 <div class="container">
-  <div class="row">
+  <div class="row" *ngIf="!logged">
+    <section class="col-6 mx-auto form-gradient">
+      <div class="card">
+        <div class="header pt-3 peach-gradient">
+          <div class="row d-flex justify-content-center">
+            <h3 class="white-text mb-3 pt-3 font-bold">¡Entrar a jugar!</h3>
+          </div>
+        </div>
 
+        <div class="card-body mx-4 mt-4">
+          <div class="md-form">
+            <input type="text" [(ngModel)]="username" id="form-user" class="form-control">
+            <label for="form-user">Nombre de Usuario</label>
+          </div>
+
+          <div class="range-field row">
+            <label for="form-av-range" class="avatar col-12 col-md-4 col-lg-2">
+              <img src="assets/sprites/pokemon/{{avatarid}}.png"/>
+            </label>
+            <input type="range" [(ngModel)]="avatarid" id="form-av-range" class="col-12 col-md-7 col-lg-9 m-0" min="1"
+                   max="{{gameserv.pokemon.length}}"/>
+          </div>
+
+          <div class="file-field">
+            <div class="btn blue-gradient btn-sm waves-effect waves-light col-12 col-md-4">
+              <span>Choose file</span>
+              <input type="file">
+            </div>
+            <div class="file-path-wrapper col-12 col-md-7">
+              <input class="file-path validate" type="text" placeholder="O sube tu avatar">
+            </div>
+          </div>
+
+          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
+            Conectarse
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="row" *ngIf="logged">
+    <section class="col-6 mx-auto form-gradient">
+      <div class="card">
+        <div class="header pt-3 peach-gradient">
+          <div class="row d-flex justify-content-center">
+            <h3 class="white-text mb-3 pt-3 font-bold">¡Entrar a jugar!</h3>
+          </div>
+        </div>
+
+        <div class="card-body mx-4 mt-4">
+
+          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="createroom()">
+            Crear Sala
+          </button>
+
+          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
+            Conectarse
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="row" *ngIf="logged">
+    <div class="users col-4 px-0 scrollbar scrollbar-juicy-peach">
+      <div *ngFor="let user of userslist"
+           class="user border border-left-0 border-right-0 border-top-0 border-dark py-0">
+        <img class="rounded-circle" src="{{user.avatar}}" alt="{{user.name}}">
+        <strong [ngStyle]="{'font-weight': 'bold', 'color': user.color}">{{user.name}}</strong>
+      </div>
+    </div>
+    <div class="chat col-8 px-0">
+      <div class="messages scrollbar scrollbar-juicy-peach mb-3">
+        <div *ngFor="let data of messages" class="message py-0"><strong
+          [ngStyle]="{'font-weight': 'bold', 'color': data.user.color}">{{data.user.name}}</strong>: {{data.message}}
+        </div>
+      </div>
+
+      <div class="pl-2">
+        <div class="md-form">
+        <textarea type="text" id="msg-area" class="md-textarea" maxlength="{{gameserv.messagelength}}"
+                  [(ngModel)]="message"></textarea>
+          <label for="msg-area">Mensaje</label>
+          <span class="character-counter" style="float: right; font-size: 12px; height: 1px;">
+            {{message.length}}/{{gameserv.messagelength}}
+          </span>
+        </div>
+        <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="sendMessage()">
+          Enviar
+        </button>
+      </div>
+    </div>
   </div>
 </div>
