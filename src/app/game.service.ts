@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import * as io from 'socket.io-client';
 import {v4 as uuid} from 'uuid';
+import {SessionStorage} from 'ngx-webstorage';
 
 @Injectable()
 export class GameService {
@@ -82,7 +83,10 @@ export class GameService {
   private url = 'http://localhost:3000';
   private socket;
 
-  private user;
+  @SessionStorage()
+  public user;
+
+  public room;
 
   constructor() {
     this.socket = io(this.url);
@@ -93,11 +97,19 @@ export class GameService {
       uuid: uuid(), name: username,
       color: '#' + (Math.random() * 0xFFFFFF << 0).toString(16), avatar: avatar
     };
+    this.relog();
+  }
+
+  public relog() {
     this.socket.emit('new-user', this.user);
   }
 
-  public sendMessage(message) {
-    this.socket.emit('chat-message', message);
+  public sendMessage(message, toroom?) {
+    if (toroom && this.room) {
+      this.socket.to(this.room).emit('chat-message', message);
+    } else {
+      this.socket.emit('chat-message', message);
+    }
   }
 
   public getUsers = () => {
@@ -117,6 +129,27 @@ export class GameService {
     });
   };
 
+  public getMatchData = () => {
+    return Observable.create((observer) => {
+      this.socket.on('match-data', (data) => {
+        observer.next(data);
+      });
+    });
+  };
+
+  public getRoomMessages = () => {
+    return Observable.create((observer) => {
+      this.socket.on('room-chat-message', (msgdata) => {
+        console.log(msgdata);
+        observer.next(msgdata);
+      });
+    });
+  };
+
+  public joinRoom = (roomid) => {
+    this.room = roomid;
+    this.socket.emit('join-room', roomid);
+  };
 
   getPokeName = (id) => {
     const name = this.pokemon[id - 1];

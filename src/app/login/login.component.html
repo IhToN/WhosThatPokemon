@@ -40,7 +40,7 @@
     </section>
   </div>
 
-  <div class="row" *ngIf="logged">
+  <div class="row mb-3" *ngIf="logged">
     <section class="col-6 mx-auto form-gradient">
       <div class="card">
         <div class="header pt-3 peach-gradient">
@@ -49,14 +49,14 @@
           </div>
         </div>
 
-        <div class="card-body mx-4 mt-4">
+        <div class="card-body text-center mx-4 mt-4">
+          <div class="md-form">
+            <input id="input-char-counter" type="number" class="text-center" [(ngModel)]="roomid" length="3">
+            <label for="input-char-counter">Número de Sala</label>
+          </div>
 
-          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="createroom()">
-            Crear Sala
-          </button>
-
-          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
-            Conectarse
+          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="joinroom()">
+            Conectarse a Partida
           </button>
         </div>
       </div>

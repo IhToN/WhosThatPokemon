@@ -61,6 +61,27 @@ io.on('connection', function (socket) {
           }
         });
 
+        socket.on('join-room', function (roomid) {
+          socket.join(roomid);
+          console.log('User connected to', roomid);
+
+          let curmatch = matches[roomid];
+          if(!curmatch) {
+            curmatch = {
+              timeCreated: Date.now(),
+              round: 1,
+              pokemonid: Math.floor(Math.random() * pokemon.all().length) + 1  ,
+              users: [userdata]
+            }
+          } else {
+            curmatch.users.push(userdata);
+          }
+          console.log(curmatch);
+
+          io.to(roomid).emit('user-joined-game', userdata);
+          io.to(roomid).emit('match-data', curmatch);
+        });
+
         /* User Disconnects */
         socket.on('disconnect', function () {
           userslist = userslist.filter(user => user.uuid !== userdata.uuid);

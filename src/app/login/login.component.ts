@@ -21,6 +21,8 @@ export class LoginComponent implements OnInit {
   avatarid = 0;
   message = '';
 
+  roomid = 0;
+
   userslist: any;
   messages = [];
 
@@ -50,6 +52,11 @@ export class LoginComponent implements OnInit {
     this.gameserv.getMessages().subscribe((msgdata) => {
       this.messages.push(msgdata);
     });
+
+    if (this.gameserv.user) {
+      this.gameserv.relog();
+      this.logged = true;
+    }
   }
 
   login() {
@@ -62,5 +69,9 @@ export class LoginComponent implements OnInit {
       this.gameserv.sendMessage(this.message);
       this.message = '';
     }
+  }
+
+  joinroom() {
+    this.gameserv.joinRoom(this.roomid);
   }
 }
