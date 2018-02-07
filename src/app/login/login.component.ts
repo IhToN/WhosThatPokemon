@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {slideToLeft} from '../../router.animations';
-import {NavigationEnd, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {GameService} from '../game.service';
 
 declare var jquery: any;
@@ -72,6 +72,6 @@ export class LoginComponent implements OnInit {
   }
 
   joinroom() {
-    this.gameserv.joinRoom(this.roomid);
+    this.router.navigate(['game/' + this.roomid]);
   }
 }
