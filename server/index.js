@@ -63,16 +63,17 @@ io.on('connection', function (socket) {
 
         socket.on('join-room', function (roomid) {
           socket.join(roomid);
-          console.log('User connected to', roomid);
+          console.log(userdata.name, 'connected to room', roomid);
 
           let curmatch = matches[roomid];
-          if(!curmatch) {
+          if (!curmatch) {
             curmatch = {
               timeCreated: Date.now(),
               round: 1,
-              pokemonid: Math.floor(Math.random() * pokemon.all().length) + 1  ,
+              pokemonid: Math.floor(Math.random() * pokemon.all().length) + 1,
               users: [userdata]
-            }
+            };
+            matches[roomid] = curmatch;
           } else {
             curmatch.users.push(userdata);
           }
