@@ -75,7 +75,9 @@ io.on('connection', function (socket) {
             };
             matches[roomid] = curmatch;
           } else {
-            curmatch.users.push(userdata);
+            if (!curmatch.users.includes(userdata)) {
+              curmatch.users.push(userdata);
+            }
           }
           console.log(curmatch);
 
