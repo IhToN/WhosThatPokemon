@@ -62,11 +62,15 @@ io.on('connection', function (socket) {
         });
 
         socket.on('join-room', function (roomid) {
+          var room = io.sockets.in(roomid);
           socket.join(roomid);
+
           console.log(userdata.name, 'connected to room', roomid);
+
 
           let curmatch = matches[roomid];
           if (!curmatch) {
+            userdata.points = 0;
             curmatch = {
               timeCreated: Date.now(),
               round: 1,
@@ -75,19 +79,32 @@ io.on('connection', function (socket) {
             };
             matches[roomid] = curmatch;
           } else {
-            if (!curmatch.users.includes(userdata)) {
+            if (!userinmatch(userdata, curmatch)) {
+              userdata.points = 0;
               curmatch.users.push(userdata);
             }
           }
+
           console.log(curmatch);
 
           io.to(roomid).emit('user-joined-game', userdata);
           io.to(roomid).emit('match-data', curmatch);
+
+          socket.on('room-chat-message', function (data) {
+            console.log('Message received', data.message);
+            io.to(data.room).emit('room-chat-message', data)
+          });
         });
 
         /* User Disconnects */
         socket.on('disconnect', function () {
           userslist = userslist.filter(user => user.uuid !== userdata.uuid);
+
+          console.log('Limpiando partidas');
+          matches.forEach((match, roomid) => {
+            match.users = match.users.filter(user => user.uuid !== userdata.uuid);
+            io.to(roomid).emit('match-data', match);
+          });
 
           io.emit('user-disconnected', userdata);
           io.emit('users-list', userslist);
@@ -96,6 +113,15 @@ io.on('connection', function (socket) {
     }
   );
 });
+
+function userinmatch(user, match) {
+  for (let muser of match.users) {
+    if (user.uuid === muser.uuid) {
+      return true;
+    }
+  }
+  return false;
+}
 
 http.listen(port, function () {
   console.log('listening on *:' + port);

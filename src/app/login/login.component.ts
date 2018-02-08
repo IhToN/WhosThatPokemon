@@ -15,8 +15,6 @@ declare var $: any;
 })
 export class LoginComponent implements OnInit {
 
-  logged = false;
-
   username;
   avatarid = 0;
   message = '';
@@ -55,13 +53,11 @@ export class LoginComponent implements OnInit {
 
     if (this.gameserv.user) {
       this.gameserv.relog();
-      this.logged = true;
     }
   }
 
   login() {
     this.gameserv.login(this.username, 'assets/sprites/pokemon/' + this.avatarid + '.png');
-    this.logged = true;
   }
 
   sendMessage() {

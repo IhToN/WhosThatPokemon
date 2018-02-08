@@ -1,8 +1,33 @@
 <div class="container">
-  <div class="pokemon col-12 col-md-5">
-
+  <div class="users row">
+    <div class="col-4 col-md-3 col-lg-2" *ngFor="let user of this.matchdata.users"><strong
+      [ngStyle]="{'font-weight': 'bold', 'color': user.color}">{{user.name}}</strong>({{user.points}})
+    </div>
   </div>
-  <div class="chat col-12 col-md-7">
+  <div class="row">
+    <div class="pokemon col-12 col-md-5 text-center">
+      <img class="poke guess" src="assets/sprites/pokemon/{{this.matchdata.pokemonid}}.png"/>
+    </div>
+    <div class="chat col-12 col-md-7">
+      <div class="messages scrollbar scrollbar-juicy-peach mb-3">
+        <div *ngFor="let data of messages" class="message py-0"><strong
+          [ngStyle]="{'font-weight': 'bold', 'color': data.user.color}">{{data.user.name}}</strong>: {{data.message}}
+        </div>
+      </div>
 
+      <div class="pl-2">
+        <div class="md-form">
+        <textarea type="text" id="msg-area" class="md-textarea" maxlength="{{gameserv.messagelength}}"
+                  [(ngModel)]="message"></textarea>
+          <label for="msg-area">Mensaje</label>
+          <span class="character-counter" style="float: right; font-size: 12px; height: 1px;">
+            {{message.length}}/{{gameserv.messagelength}}
+          </span>
+        </div>
+        <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="sendMessage()">
+          Enviar
+        </button>
+      </div>
+    </div>
   </div>
 </div>

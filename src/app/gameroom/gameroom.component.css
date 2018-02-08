@@ -1,0 +1,7 @@
+img.poke {
+  width: 80%;
+}
+
+img.poke.guess {
+  filter: brightness(0);
+}

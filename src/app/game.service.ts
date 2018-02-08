@@ -85,6 +85,7 @@ export class GameService {
 
   @SessionStorage()
   public user;
+  logged = false;
 
   public room;
 
@@ -101,14 +102,17 @@ export class GameService {
   }
 
   public relog() {
-    this.socket.emit('new-user', this.user);
+    if (!this.logged) {
+      this.socket.emit('new-user', this.user);
+      this.logged = true;
+    }
   }
 
   public sendMessage(message, toroom?) {
     if (toroom && this.room) {
-      this.socket.to(this.room).emit('chat-message', message);
+      this.socket.emit('room-chat-message', {user: this.user, room: toroom, message: message});
     } else {
-      this.socket.emit('chat-message', message);
+      this.socket.emit('chat-message', {user: this.user, message: message});
     }
   }
 

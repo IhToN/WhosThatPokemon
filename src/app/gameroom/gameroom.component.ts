@@ -18,7 +18,10 @@ export class GameroomComponent implements OnInit {
     pokemonid: 0,
     users: []
   };
+
   roomid;
+  message = '';
+
   messages = [];
 
   constructor(public gameserv: GameService, private router: Router, private route: ActivatedRoute) {
@@ -51,16 +54,28 @@ export class GameroomComponent implements OnInit {
         this.router.navigate(['/home']);
       }
 
-      this.joinroom();
-
       this.gameserv.getMatchData().subscribe(data => {
         this.matchdata = data;
+        console.log(this.matchdata);
       });
       this.gameserv.getRoomMessages().subscribe((msgdata) => {
         this.messages.push(msgdata);
       });
+
+      if (this.gameserv.user) {
+        this.gameserv.relog();
+      }
+
+      this.joinroom();
     });
 
+  }
+
+  sendMessage() {
+    if (this.message.length > 0 && this.message.length <= this.gameserv.messagelength) {
+      this.gameserv.sendMessage(this.message, this.roomid);
+      this.message = '';
+    }
   }
 
   joinroom() {

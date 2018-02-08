@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="row" *ngIf="!logged">
+  <div class="row" *ngIf="!gameserv.logged">
     <section class="col-6 mx-auto form-gradient">
       <div class="card">
         <div class="header pt-3 peach-gradient">
@@ -40,7 +40,7 @@
     </section>
   </div>
 
-  <div class="row mb-3" *ngIf="logged">
+  <div class="row mb-3" *ngIf="gameserv.logged">
     <section class="col-6 mx-auto form-gradient">
       <div class="card">
         <div class="header pt-3 peach-gradient">
@@ -63,7 +63,7 @@
     </section>
   </div>
 
-  <div class="row" *ngIf="logged">
+  <div class="row" *ngIf="gameserv.logged">
     <div class="users col-4 px-0 scrollbar scrollbar-juicy-peach">
       <div *ngFor="let user of userslist"
            class="user border border-left-0 border-right-0 border-top-0 border-dark py-0">
