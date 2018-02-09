@@ -6,7 +6,8 @@
   </div>
   <div class="row">
     <div class="pokemon col-12 col-md-5 text-center">
-      <img class="poke guess" src="assets/sprites/pokemon/{{this.matchdata.pokemonid}}.png"/>
+      <img class="poke" [ngClass]="{'guess': pokemonfound.pokemon === matchdata.pokemonid}"
+           src="assets/sprites/pokemon/{{this.matchdata.pokemonid}}.png"/>
     </div>
     <div class="chat col-12 col-md-7">
       <div class="messages scrollbar scrollbar-juicy-peach mb-3">

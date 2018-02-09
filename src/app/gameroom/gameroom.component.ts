@@ -22,7 +22,7 @@ export class GameroomComponent implements OnInit {
   roomid;
   message = '';
 
-  pokemonfound: any = false;
+  pokemonfound = {user: '', pokemon: 0};
 
   messages = [];
 

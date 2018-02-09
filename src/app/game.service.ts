@@ -3,6 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import * as io from 'socket.io-client';
 import {v4 as uuid} from 'uuid';
 import {SessionStorage} from 'ngx-webstorage';
+import {environment} from '../environments/environment';
 
 @Injectable()
 export class GameService {
@@ -80,7 +81,7 @@ export class GameService {
 
   public messagelength = 240;
 
-  private url = 'http://localhost:3000';
+  private url = environment.socketURL;
   private socket;
 
   @SessionStorage()
