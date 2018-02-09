@@ -5,3 +5,7 @@ img.poke {
 img.poke.guess {
   filter: brightness(0);
 }
+
+.messages {
+  height: 250px;
+}

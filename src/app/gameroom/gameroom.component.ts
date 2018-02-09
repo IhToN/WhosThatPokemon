@@ -22,6 +22,8 @@ export class GameroomComponent implements OnInit {
   roomid;
   message = '';
 
+  pokemonfound: any = false;
+
   messages = [];
 
   constructor(public gameserv: GameService, private router: Router, private route: ActivatedRoute) {
@@ -60,6 +62,21 @@ export class GameroomComponent implements OnInit {
       });
       this.gameserv.getRoomMessages().subscribe((msgdata) => {
         this.messages.push(msgdata);
+      });
+      this.gameserv.getPokemonFound().subscribe((pokedata) => {
+        this.pokemonfound = pokedata;
+        console.log(this.matchdata.pokemonid, pokedata.pokemon);
+        if (this.matchdata.pokemonid === this.pokemonfound.pokemon) {
+          this.messages.push({
+            user: {name: 'Sistema', color: 'red'},
+            message: `<strong>${pokedata.user.name}</strong> ha acertado el pokemon!`
+          });
+        } else {
+          this.messages.push({
+            user: {name: 'Sistema', color: 'red'},
+            message: `<strong>${pokedata.user.name}</strong> ha optado por usar el comodín de ser mamá...`
+          });
+        }
       });
 
       if (this.gameserv.user) {

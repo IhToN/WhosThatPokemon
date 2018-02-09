@@ -11,7 +11,8 @@
     <div class="chat col-12 col-md-7">
       <div class="messages scrollbar scrollbar-juicy-peach mb-3">
         <div *ngFor="let data of messages" class="message py-0"><strong
-          [ngStyle]="{'font-weight': 'bold', 'color': data.user.color}">{{data.user.name}}</strong>: {{data.message}}
+          [ngStyle]="{'font-weight': 'bold', 'color': data.user.color}">{{data.user.name}}</strong>: <span
+          [innerHTML]="data.message"></span>
         </div>
       </div>
 

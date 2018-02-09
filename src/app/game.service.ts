@@ -141,6 +141,15 @@ export class GameService {
     });
   };
 
+  public getPokemonFound = () => {
+    return Observable.create((observer) => {
+      this.socket.on('pokemon-found', (data) => {
+        /*{user: tempuser, pokemon: pokeid}*/
+        observer.next(data);
+      });
+    });
+  };
+
   public getRoomMessages = () => {
     return Observable.create((observer) => {
       this.socket.on('room-chat-message', (msgdata) => {

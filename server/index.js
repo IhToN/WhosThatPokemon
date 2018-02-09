@@ -20,7 +20,8 @@ var userslist = [];
     uuid: '0000-0000-0000',
     name: 'Username',
     color: '#FFFFFF',
-    avatar: 'http://...'
+    avatar: 'http://...',
+    ingame: false
   }
 */
 var matches = [];
@@ -62,25 +63,27 @@ io.on('connection', function (socket) {
         });
 
         socket.on('join-room', function (roomid) {
-          var room = io.sockets.in(roomid);
           socket.join(roomid);
 
           console.log(userdata.name, 'connected to room', roomid);
+          userdata.ingame = true;
 
 
           let curmatch = matches[roomid];
           if (!curmatch) {
             userdata.points = 0;
+            userdata.pikachus = 0;
             curmatch = {
               timeCreated: Date.now(),
               round: 1,
-              pokemonid: Math.floor(Math.random() * pokemon.all().length) + 1,
+              pokemonid: choosePokemon(),
               users: [userdata]
             };
             matches[roomid] = curmatch;
           } else {
-            if (!userinmatch(userdata, curmatch)) {
+            if (!getUserInMatch(userdata, curmatch)) {
               userdata.points = 0;
+              userdata.pikachus = 0;
               curmatch.users.push(userdata);
             }
           }
@@ -91,8 +94,39 @@ io.on('connection', function (socket) {
           io.to(roomid).emit('match-data', curmatch);
 
           socket.on('room-chat-message', function (data) {
-            console.log('Message received', data.message);
-            io.to(data.room).emit('room-chat-message', data)
+            if (curmatch.users.length < 2) {
+              io.to(data.room).emit('room-chat-message', {
+                user: {name: 'Sistema', color: 'red'},
+                message: 'Tenéis que ser dos jugadores o más, aprovecha para recordar qué pokemon es.'
+              });
+              return;
+            }
+            console.log(data.user.name, 'send a message to room', data.room, ':', data.message);
+            if (countWords(data.message) > 1) {
+              io.to(data.room).emit('room-chat-message', data)
+            } else {
+              try {
+                let pokeid = pokemon.getId(data.message, 'en');
+                let tempuser = getUserInMatch(data.user, curmatch);
+
+                if (pokeid === curmatch.pokemonid) {
+                  console.log(data.user.name, 'found the pokemon!', data.message);
+
+                  winner(tempuser, roomid, curmatch, pokeid, 5);
+                } else if (data.message.toLowerCase() === 'pikachu' && tempuser.pikachus < 2) {
+                  console.log(data.user.name, 'es una madre!', data.message);
+
+                  winner(tempuser, roomid, curmatch, 25, 1);
+                } else {
+                  console.log(tempuser);
+                  io.to(data.room).emit('room-chat-message', data);
+                }
+
+              } catch (err) {
+                console.log(err);
+                io.to(data.room).emit('room-chat-message', data);
+              }
+            }
           });
         });
 
@@ -114,13 +148,40 @@ io.on('connection', function (socket) {
   );
 });
 
-function userinmatch(user, match) {
+function choosePokemon() {
+  return Math.floor(Math.random() * pokemon.all().length) + 1;
+}
+
+function getUserInMatch(user, match) {
   for (let muser of match.users) {
     if (user.uuid === muser.uuid) {
-      return true;
+      return muser;
     }
   }
   return false;
+}
+
+function countWords(s) {
+  s = s.replace(/(^\s*)|(\s*$)/gi, "");//exclude  start and end white-space
+  s = s.replace(/[ ]{2,}/gi, " ");//2 or more space to 1
+  s = s.replace(/\n /, "\n"); // exclude newline with a start spacing
+  return s.split(' ').length;
+}
+
+function winner(tempuser, roomid, curmatch, pokeid, points = 5) {
+  io.to(roomid).emit('pokemon-found', {user: tempuser, pokemon: pokeid});
+  if (tempuser) {
+    tempuser.points += points;
+  }
+  if (pokeid) {
+    tempuser.pikachus += 1;
+  }
+  curmatch.round += 1;
+  curmatch.pokemonid = choosePokemon();
+
+  setTimeout(() => {
+    io.to(roomid).emit('match-data', curmatch);
+  }, 3000);
 }
 
 http.listen(port, function () {
