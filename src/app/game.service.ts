@@ -184,7 +184,7 @@ export class GameService {
   };
 
   getPokeId = (name) => {
-    const index = this.pokemon.indexOf(name);
+    const index = this.pokemon.findIndex(pokemon => name.toLowerCase() === pokemon.toLowerCase());
     if (index === -1) {
       throw new Error(`Pokémon with name '${name}' does not exist.`);
     }
