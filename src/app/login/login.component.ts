@@ -7,7 +7,7 @@ import {environment} from '../../environments/environment';
 
 declare var jquery: any;
 declare var $: any;
-const URL = environment.socketURL + '/upload/';
+const URL = environment.socketURL + '/upload';
 
 @Component({
   selector: 'app-login',
@@ -62,14 +62,20 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    if (!this.username) {
+      console.log('You have to select a username.');
+      return;
+    }
+
     let avatar = 'assets/sprites/pokemon/' + this.avatarid + '.png';
-    console.log('A subir:', this.uploader.getNotUploadedItems());
-    console.log('A la URL:', URL);
     if (this.uploader.getNotUploadedItems().length) {
       this.uploader.uploadAll();
-      console.log('Uploader:', this.uploader);
-      console.log('Archivos:', this.uploader.queue);
-      avatar = 'uploads/' + this.uploader.queue[0].file.name;
+      avatar = URL + 's/' + this.uploader.queue[0].file.name;
+      const fileType = avatar.split('.').pop();
+      if (fileType !== 'jpg' && fileType !== 'png' && fileType !== 'jpeg' && fileType !== 'gif') {
+        console.log('Wrong file format, choose another one.');
+        return;
+      }
     }
     this.gameserv.login(this.username, avatar);
   }

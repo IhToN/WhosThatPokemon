@@ -1,10 +1,7 @@
 var express = require('express');
 var path = require('path');
 var formidable = require("formidable");
-var cors = require('cors')
-
 var app = express();
-app.use(cors);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
@@ -12,28 +9,36 @@ var port = process.env.PORT || 3000;
 const pokemon = require('pokemon');
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'uploads')));
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.post('/upload', function (req, res) {
-  console.log('File to upload');
   let form = new formidable.IncomingForm();
 
 
   form.parse(req);
 
   form.on('fileBegin', function (name, file) {
-    file.path = path.join(__dirname, 'public', 'uploads', file.name);
-  });
+    var fileType = file.type.split('/').pop();
+    if (fileType === 'jpg' || fileType === 'png' || fileType === 'jpeg' || fileType === 'gif') {
+      file.path = path.join(__dirname, 'uploads', file.name);
 
-  form.on('file', function (name, file) {
-    console.log('Uploaded ' + file.name);
+      form.on('file', function (name, file) {
+        console.log('Uploaded ' + file.name);
+      });
+    } else {
+      res.end();
+    }
   });
 });
 
-
-
-/*app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
-});*/
 
 var userslist = [];
 /*
@@ -71,6 +76,7 @@ io.on('connection', function (socket) {
       if (!userdata) return;
       if (userdata.hasOwnProperty('uuid') && userdata.hasOwnProperty('name')
         && userdata.hasOwnProperty('color') && userdata.hasOwnProperty('avatar')) {
+        userdata.ingame = false;
         userslist.push(userdata);
         io.emit('user-connected', userdata);
         io.emit('users-list', userslist);
