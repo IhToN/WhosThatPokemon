@@ -7,7 +7,7 @@ import {environment} from '../../environments/environment';
 
 declare var jquery: any;
 declare var $: any;
-const URL = environment.socketURL + '/upload';
+const URL = (environment.socketURL ? environment.socketURL : '') + '/upload';
 
 @Component({
   selector: 'app-login',
