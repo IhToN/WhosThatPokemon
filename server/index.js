@@ -79,7 +79,7 @@ const pokemon = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon',
   'Lunala', 'Nihilego', 'Buzzwole', 'Pheromosa', 'Xurkitree', 'Celesteela', 'Kartana', 'Guzzlord', 'Necrozma', 'Magearna', 'Marshadow'];
 
 getPokeName = (id) => {
-  const name = this.pokemon[id - 1];
+  const name = pokemon[id - 1];
   if (!name) {
     throw new Error(`Pokémon with ID '${id}' does not exist.`);
   }
@@ -87,7 +87,7 @@ getPokeName = (id) => {
 };
 
 getPokeId = (name) => {
-  const index = this.pokemon.findIndex(pokemon => name.toLowerCase() === pokemon.toLowerCase());
+  const index = pokemon.findIndex(pokemon => name.toLowerCase() === pokemon.toLowerCase());
   if (index === -1) {
     throw new Error(`Pokémon with name '${name}' does not exist.`);
   }
