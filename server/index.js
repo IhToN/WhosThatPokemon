@@ -9,7 +9,6 @@ var port = process.env.PORT || 3000;
 const pokemon = require('pokemon');
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'uploads')));
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
@@ -28,7 +27,7 @@ app.post('/upload', function (req, res) {
   form.on('fileBegin', function (name, file) {
     var fileType = file.type.split('/').pop();
     if (fileType === 'jpg' || fileType === 'png' || fileType === 'jpeg' || fileType === 'gif') {
-      file.path = path.join(__dirname, 'uploads', file.name);
+      file.path = path.join(__dirname, 'public', 'uploads', file.name);
 
       form.on('file', function (name, file) {
         console.log('Uploaded ' + file.name);
@@ -157,6 +156,11 @@ io.on('connection', function (socket) {
           });
         });
 
+        socket.on('leave-room', function (roomid) {
+          socket.leave(roomid, (data) => {
+            userdata.ingame = false;
+          });
+        });
         /* User Disconnects */
         socket.on('disconnect', function () {
           userslist = userslist.filter(user => user.uuid !== userdata.uuid);
@@ -164,6 +168,7 @@ io.on('connection', function (socket) {
           console.log('Limpiando partidas');
           matches.forEach((match, roomid) => {
             match.users = match.users.filter(user => user.uuid !== userdata.uuid);
+            match.users.filter(user => user.uuid === userdata.uuid).forEach(user => user.ingame = false);
             io.to(roomid).emit('match-data', match);
           });
 

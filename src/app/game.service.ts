@@ -88,7 +88,7 @@ export class GameService {
   public user;
   logged = false;
 
-  public room;
+  public room = -1;
 
   constructor() {
     this.socket = io(this.url);
@@ -163,6 +163,11 @@ export class GameService {
   public joinRoom = (roomid) => {
     this.room = roomid;
     this.socket.emit('join-room', roomid);
+  };
+
+  public leaveRoom = () => {
+    this.socket.emit('leave-room', this.room);
+    this.room = -1;
   };
 
   getPokeName = (id) => {

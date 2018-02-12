@@ -59,6 +59,10 @@ export class LoginComponent implements OnInit {
     if (this.gameserv.user) {
       this.gameserv.relog();
     }
+
+    if (this.gameserv.room >= 0) {
+      this.gameserv.leaveRoom();
+    }
   }
 
   login() {
