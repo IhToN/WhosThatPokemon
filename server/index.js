@@ -287,7 +287,7 @@ io.on('connection', function (socket) {
 });
 
 function choosePokemon() {
-  return Math.floor(Math.random() * pokemon.all().length) + 1;
+  return Math.floor(Math.random() * pokemon.length) + 1;
 }
 
 function getUserInMatch(user, match) {
