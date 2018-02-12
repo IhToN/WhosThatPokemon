@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, OnInit} from '@angular/core';
 import {slideToLeft} from '../../router.animations';
 import {GameService} from '../game.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -10,7 +10,7 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
   animations: [slideToLeft()],
   host: {'[@routerTransition]': ''}
 })
-export class GameroomComponent implements OnInit {
+export class GameroomComponent implements OnInit, AfterViewChecked {
 
   matchdata = {
     timeCreated: 0,
@@ -86,6 +86,11 @@ export class GameroomComponent implements OnInit {
       this.joinroom();
     });
 
+  }
+
+  ngAfterViewChecked(): void {
+    const objDiv = document.getElementById('messages');
+    objDiv.scrollTop = objDiv.scrollHeight;
   }
 
   sendMessage() {

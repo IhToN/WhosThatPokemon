@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, OnInit} from '@angular/core';
 import {slideToLeft} from '../../router.animations';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {GameService} from '../game.service';
@@ -16,8 +16,7 @@ const URL = (environment.socketURL ? environment.socketURL : '') + '/upload';
   animations: [slideToLeft()],
   host: {'[@routerTransition]': ''}
 })
-export class LoginComponent implements OnInit {
-
+export class LoginComponent implements OnInit, AfterViewChecked {
   public uploader: FileUploader = new FileUploader({url: URL});
 
   username;
@@ -53,6 +52,7 @@ export class LoginComponent implements OnInit {
     });
 
     this.gameserv.getMessages().subscribe((msgdata) => {
+      console.log('mensaje recibido', msgdata);
       this.messages.push(msgdata);
     });
 
@@ -63,6 +63,11 @@ export class LoginComponent implements OnInit {
     if (this.gameserv.room >= 0) {
       this.gameserv.leaveRoom();
     }
+  }
+
+  ngAfterViewChecked(): void {
+    const objDiv = document.getElementById('messages');
+    objDiv.scrollTop = objDiv.scrollHeight;
   }
 
   login() {

@@ -11,7 +11,7 @@
            src="assets/sprites/pokemon/{{matchdata.pokemonid}}.png"/>
     </div>
     <div class="chat col-12 col-md-7">
-      <div class="messages scrollbar scrollbar-juicy-peach mb-3">
+      <div id="messages" class="messages scrollbar scrollbar-juicy-peach mb-3">
         <div *ngFor="let data of messages" class="message py-0"><strong
           [ngStyle]="{'font-weight': 'bold', 'color': data.user.color}">{{data.user.name}}</strong>: <span
           [innerHTML]="data.message"></span>
@@ -21,7 +21,7 @@
       <div class="pl-2">
         <div class="md-form">
         <textarea type="text" id="msg-area" class="md-textarea" maxlength="{{gameserv.messagelength}}"
-                  [(ngModel)]="message"></textarea>
+                  [(ngModel)]="message" (keyup.control.enter)="sendMessage()"></textarea>
           <label for="msg-area">Mensaje</label>
           <span class="character-counter" style="float: right; font-size: 12px; height: 1px;">
             {{message.length}}/{{gameserv.messagelength}}

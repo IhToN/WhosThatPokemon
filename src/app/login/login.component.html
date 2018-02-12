@@ -10,7 +10,8 @@
 
         <div class="card-body mx-4 mt-4">
           <div class="md-form">
-            <input type="text" [(ngModel)]="username" id="form-user" class="form-control" required>
+            <input type="text" [(ngModel)]="username" (keyup.enter)="login()" id="form-user" class="form-control"
+                   required>
             <label for="form-user">Nombre de Usuario</label>
           </div>
 
@@ -48,7 +49,8 @@
 
         <div class="card-body text-center mx-4 mt-4">
           <div class="md-form">
-            <input id="input-char-counter" type="number" class="text-center" [(ngModel)]="roomid" length="3">
+            <input id="input-char-counter" type="number" class="text-center" [(ngModel)]="roomid"
+                   (keyup.enter)="joinroom()" length="3">
             <label for="input-char-counter">Número de Sala</label>
           </div>
 
@@ -69,8 +71,8 @@
       </div>
     </div>
     <div class="chat col-8 px-0">
-      <div class="messages scrollbar scrollbar-juicy-peach mb-3">
-        <div *ngFor="let data of messages" class="message py-0"><strong
+      <div id="messages" class="messages scrollbar scrollbar-juicy-peach mb-3">
+        <div *ngFor="let data of messages" class="message px-1 py-0"><strong
           [ngStyle]="{'font-weight': 'bold', 'color': data.user.color}">{{data.user.name}}</strong>: {{data.message}}
         </div>
       </div>
@@ -78,7 +80,7 @@
       <div class="pl-2">
         <div class="md-form">
         <textarea type="text" id="msg-area" class="md-textarea" maxlength="{{gameserv.messagelength}}"
-                  [(ngModel)]="message"></textarea>
+                  [(ngModel)]="message" (keyup.control.enter)="sendMessage()"></textarea>
           <label for="msg-area">Mensaje</label>
           <span class="character-counter" style="float: right; font-size: 12px; height: 1px;">
             {{message.length}}/{{gameserv.messagelength}}

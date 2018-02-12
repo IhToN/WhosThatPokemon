@@ -167,10 +167,10 @@ io.on('connection', function (socket) {
         io.emit('users-list', userslist);
 
         /* User Connected on Global Room*/
-        socket.on('chat-message', function (msg) {
-          console.log('Message received', msg);
-          if (msg.length > 0) {
-            io.emit('chat-message', {user: userdata, message: msg});
+        socket.on('chat-message', function (msgdata) {
+          console.log('Message received', msgdata);
+          if (msgdata.message.length > 0) {
+            io.emit('chat-message', msgdata);
           }
         });
 
