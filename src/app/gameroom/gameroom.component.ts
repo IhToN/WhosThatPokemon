@@ -98,4 +98,9 @@ export class GameroomComponent implements OnInit {
   joinroom() {
     this.gameserv.joinRoom(this.roomid);
   }
+
+  leave() {
+    this.gameserv.leaveRoom();
+    this.router.navigate(['/home']);
+  }
 }

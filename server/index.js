@@ -88,15 +88,15 @@ io.on('connection', function (socket) {
           }
         });
 
-        socket.on('join-room', function (roomid) {
-          socket.join(roomid);
+        socket.on('join-room', function (joindata) {
+          socket.join(joindata.roomid);
 
-          console.log(userdata.name, 'connected to room', roomid);
+          console.log(userdata.name, 'connected to room', joindata.roomid);
           userdata.ingame = true;
 
 
-          let curmatch = matches[roomid];
-          if (!curmatch) {
+          let curmatch = matches[joindata.roomid];
+          if (!curmatch || joindata.restart) {
             userdata.points = 0;
             userdata.pikachus = 0;
             curmatch = {
@@ -105,7 +105,7 @@ io.on('connection', function (socket) {
               pokemonid: choosePokemon(),
               users: [userdata]
             };
-            matches[roomid] = curmatch;
+            matches[joindata.roomid] = curmatch;
           } else {
             if (!getUserInMatch(userdata, curmatch)) {
               userdata.points = 0;
@@ -114,10 +114,8 @@ io.on('connection', function (socket) {
             }
           }
 
-          console.log(curmatch);
-
-          io.to(roomid).emit('user-joined-game', userdata);
-          io.to(roomid).emit('match-data', curmatch);
+          io.to(joindata.roomid).emit('user-joined-game', userdata);
+          io.to(joindata.roomid).emit('match-data', curmatch);
 
           socket.on('room-chat-message', function (data) {
             if (curmatch.users.length < 2) {
@@ -138,11 +136,11 @@ io.on('connection', function (socket) {
                 if (pokeid === curmatch.pokemonid) {
                   console.log(data.user.name, 'found the pokemon!', data.message);
 
-                  winner(tempuser, roomid, curmatch, pokeid, 5);
+                  winner(tempuser, data.room, curmatch, pokeid, 5);
                 } else if (data.message.toLowerCase() === 'pikachu' && tempuser.pikachus < 2) {
                   console.log(data.user.name, 'es una madre!', data.message);
 
-                  winner(tempuser, roomid, curmatch, 25, 1);
+                  winner(tempuser, data.room, curmatch, 25, 1);
                 } else {
                   console.log(tempuser);
                   io.to(data.room).emit('room-chat-message', data);
@@ -154,13 +152,35 @@ io.on('connection', function (socket) {
               }
             }
           });
-        });
 
-        socket.on('leave-room', function (roomid) {
-          socket.leave(roomid, (data) => {
-            userdata.ingame = false;
+          socket.on('leave-room', function (roomid) {
+            socket.leave(roomid, (data) => {
+              userdata.ingame = false;
+
+              console.log('User leaved the room');
+
+              curmatch.users = match.users.filter(user => user.uuid !== userdata.uuid);
+              io.to(roomid).emit('user-leaved-game', userdata);
+            });
+          });
+
+          socket.on('restart-room', function (notused) {
+            curmatch.users.forEach(user => {
+              user.points = 0;
+              user.pikachus = 0;
+            });
+            newmatch = {
+              timeCreated: Date.now(),
+              round: 1,
+              pokemonid: choosePokemon(),
+              users: curmatch.users
+            };
+            matches[joindata.roomid] = newmatch;
+            curmatch = newmatch;
+            io.to(joindata.roomid).emit('match-data', curmatch);
           });
         });
+
         /* User Disconnects */
         socket.on('disconnect', function () {
           userslist = userslist.filter(user => user.uuid !== userdata.uuid);
@@ -210,6 +230,8 @@ function winner(tempuser, roomid, curmatch, pokeid, points = 5) {
   }
   curmatch.round += 1;
   curmatch.pokemonid = choosePokemon();
+
+  console.log('Winner elegido');
 
   setTimeout(() => {
     io.to(roomid).emit('match-data', curmatch);

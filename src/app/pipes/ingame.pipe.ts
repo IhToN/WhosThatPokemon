@@ -5,15 +5,12 @@ import {Pipe, PipeTransform} from '@angular/core';
 })
 export class IngamePipe implements PipeTransform {
 
-  transform(items: any[], args?: any): any {
-    console.log('value:', items);
-    console.log('args:', args);
-
-    if (!items) {
-      return items;
+  transform(users: any[], args?: any): any {
+    if (!users) {
+      return users;
     }
 
-    return items.filter(user => !user.ingame);
+    return users.filter(user => !user.ingame);
   }
 
 }

@@ -13,6 +13,7 @@ import {FooterComponent} from './footer/footer.component';
 import {GameroomComponent} from './gameroom/gameroom.component';
 import {FileUploadModule} from 'ng2-file-upload';
 import { IngamePipe } from './pipes/ingame.pipe';
+import { OrderPipe } from './pipes/order.pipe';
 
 const routes: Routes = [
   // La ruta '' indica la ruta por defecto (antiguo index.html)
@@ -30,7 +31,8 @@ const routes: Routes = [
     HeaderComponent,
     FooterComponent,
     GameroomComponent,
-    IngamePipe
+    IngamePipe,
+    OrderPipe
   ],
   imports: [
     BrowserModule,

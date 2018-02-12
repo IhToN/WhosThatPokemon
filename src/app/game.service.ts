@@ -80,6 +80,7 @@ export class GameService {
     'Lunala', 'Nihilego', 'Buzzwole', 'Pheromosa', 'Xurkitree', 'Celesteela', 'Kartana', 'Guzzlord', 'Necrozma', 'Magearna', 'Marshadow'];
 
   public messagelength = 240;
+  public maxrounds = 20;
 
   private url = environment.socketURL;
   private socket;
@@ -160,9 +161,13 @@ export class GameService {
     });
   };
 
+  public restartRoom = () => {
+    this.socket.emit('restart-room', this.room);
+  };
+
   public joinRoom = (roomid) => {
     this.room = roomid;
-    this.socket.emit('join-room', roomid);
+    this.socket.emit('join-room', {roomid: roomid, restart: false});
   };
 
   public leaveRoom = () => {
