@@ -2,9 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {slideToLeft} from '../../router.animations';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {GameService} from '../game.service';
+import {FileSelectDirective, FileDropDirective, FileUploader} from 'ng2-file-upload/ng2-file-upload';
+import {environment} from '../../environments/environment';
 
 declare var jquery: any;
 declare var $: any;
+const URL = environment.socketURL + '/upload/';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +17,8 @@ declare var $: any;
   host: {'[@routerTransition]': ''}
 })
 export class LoginComponent implements OnInit {
+
+  public uploader: FileUploader = new FileUploader({url: URL});
 
   username;
   avatarid = 0;
@@ -57,7 +62,16 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.gameserv.login(this.username, 'assets/sprites/pokemon/' + this.avatarid + '.png');
+    let avatar = 'assets/sprites/pokemon/' + this.avatarid + '.png';
+    console.log('A subir:', this.uploader.getNotUploadedItems());
+    console.log('A la URL:', URL);
+    if (this.uploader.getNotUploadedItems().length) {
+      this.uploader.uploadAll();
+      console.log('Uploader:', this.uploader);
+      console.log('Archivos:', this.uploader.queue);
+      avatar = 'uploads/' + this.uploader.queue[0].file.name;
+    }
+    this.gameserv.login(this.username, avatar);
   }
 
   sendMessage() {

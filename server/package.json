@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "my first socket.io app",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.15.2",
+    "formidable": "^1.1.1",
     "nodemon": "^1.14.12",
     "pokemon": "^1.2.2",
     "socket.io": "^1.7.3"

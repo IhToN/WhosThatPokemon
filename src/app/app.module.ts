@@ -11,6 +11,7 @@ import {FormsModule} from '@angular/forms';
 import {HeaderComponent} from './header/header.component';
 import {FooterComponent} from './footer/footer.component';
 import {GameroomComponent} from './gameroom/gameroom.component';
+import {FileUploadModule} from 'ng2-file-upload';
 
 const routes: Routes = [
   // La ruta '' indica la ruta por defecto (antiguo index.html)
@@ -32,6 +33,7 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    FileUploadModule,
     FormsModule,
     RouterModule.forRoot(routes)
   ],

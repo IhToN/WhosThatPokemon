@@ -1,7 +1,10 @@
 var express = require('express');
 var path = require('path');
+var formidable = require("formidable");
+var cors = require('cors')
 
 var app = express();
+app.use(cors);
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
@@ -9,6 +12,24 @@ var port = process.env.PORT || 3000;
 const pokemon = require('pokemon');
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.post('/upload', function (req, res) {
+  console.log('File to upload');
+  let form = new formidable.IncomingForm();
+
+
+  form.parse(req);
+
+  form.on('fileBegin', function (name, file) {
+    file.path = path.join(__dirname, 'public', 'uploads', file.name);
+  });
+
+  form.on('file', function (name, file) {
+    console.log('Uploaded ' + file.name);
+  });
+});
+
+
 
 /*app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
