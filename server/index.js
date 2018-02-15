@@ -78,6 +78,7 @@ const pokemon = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon',
   'Dhelmise', 'Jangmo-o', 'Hakamo-o', 'Kommo-o', 'Tapu Koko', 'Tapu Lele', 'Tapu Bulu', 'Tapu Fini', 'Cosmog', 'Cosmoem', 'Solgaleo',
   'Lunala', 'Nihilego', 'Buzzwole', 'Pheromosa', 'Xurkitree', 'Celesteela', 'Kartana', 'Guzzlord', 'Necrozma', 'Magearna', 'Marshadow'];
 const wtpsound = 'assets/mp3/wtpsound.mp3';
+const opsongs = ['assets/mp3/op_theme.mp3', 'assets/mp3/op_bluered.mp3'];
 
 getPokeName = (id) => {
   const name = pokemon[id - 1];
@@ -170,6 +171,7 @@ io.on('connection', function (socket) {
         userslist.push(userdata);
         io.emit('user-connected', userdata);
         io.emit('users-list', userslist);
+        socket.emit('op-song', getRandOpSong());
 
         /* User Connected on Global Room*/
         socket.on('chat-message', function (msgdata) {
@@ -329,6 +331,10 @@ function winner(tempuser, roomid, curmatch, pokeid, points = 5) {
   setTimeout(() => {
     io.to(roomid).emit('match-data', curmatch);
   }, 3000);
+}
+
+function getRandOpSong() {
+  return opsongs[Math.floor(Math.random() * opsongs.length)];
 }
 
 http.listen(port, function () {

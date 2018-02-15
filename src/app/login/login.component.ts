@@ -56,6 +56,8 @@ export class LoginComponent implements OnInit, AfterViewChecked {
       this.messages.push(msgdata);
     });
 
+    this.gameserv.playOpeningSong();
+
     if (this.gameserv.user) {
       this.gameserv.relog();
     }

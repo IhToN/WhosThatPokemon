@@ -143,9 +143,18 @@ export class GameService {
     });
   };
 
-  public playWTPSoundData = () => {
+  public playOpeningSong = () => {
+    this.socket.on('op-song', (soundurl) => {
+      //console.log('Se supone que tengo que reproducir el audio:', soundurl);
+      const audio = document.createElement('audio');
+      audio.src = soundurl;
+      audio.play();
+    });
+  };
+
+  public playWTPSound = () => {
     this.socket.on('wtp-sound', (soundurl) => {
-      console.log('Se supone que tengo que reproducir el audio:', soundurl);
+      //console.log('Se supone que tengo que reproducir el audio:', soundurl);
       const audio = document.createElement('audio');
       audio.src = soundurl;
       audio.play();

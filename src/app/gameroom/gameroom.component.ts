@@ -78,7 +78,7 @@ export class GameroomComponent implements OnInit, AfterViewChecked {
           });
         }
       });
-      this.gameserv.playWTPSoundData();
+      this.gameserv.playWTPSound();
 
       if (this.gameserv.user) {
         this.gameserv.relog();
