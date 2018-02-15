@@ -96,6 +96,10 @@ getPokeId = (name) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('*', function (req, res) {
+  res.sendfile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
   res.header('Access-Control-Allow-Credentials', true);
