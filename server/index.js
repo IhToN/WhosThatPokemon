@@ -253,7 +253,7 @@ io.on('connection', function (socket) {
 
               console.log('User leaved the room');
 
-              curmatch.users = match.users.filter(user => user.uuid !== userdata.uuid);
+              curmatch.users = curmatch.users.filter(user => user.uuid !== userdata.uuid);
               io.to(roomid).emit('user-leaved-game', userdata);
             });
           });
