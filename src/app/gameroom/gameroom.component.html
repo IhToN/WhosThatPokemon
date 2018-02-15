@@ -35,19 +35,12 @@
   </div>
 </div>
 
-<div class="col-4 mx-auto card card-cascade wider" *ngIf="matchdata.round >= gameserv.maxrounds">
-
-  <!--Card image-->
+<div class="col-12 col-md-6 col-lg-4 mx-auto card card-cascade wider" *ngIf="matchdata.round >= gameserv.maxrounds">
   <div class="view gradient-card-header peach-gradient">
     <h2 class="h2-responsive mb-2">Ranking de Usuarios</h2>
     <p class="">Ronda: {{matchdata.round}}</p>
-
   </div>
-  <!--/Card image-->
-
-  <!--Card content-->
   <div class="card-body text-center">
-
     <ol class="card-text col-10 col-offset-1 mr-2 ml-2">
       <li *ngFor="let user of matchdata.users | order"><strong
         [ngStyle]="{'font-weight': 'bold', 'color': user.color}">{{user.name}}</strong>({{user.points}})
@@ -59,6 +52,4 @@
       Nuevo
     </button>
   </div>
-  <!--/.Card content-->
-
 </div>

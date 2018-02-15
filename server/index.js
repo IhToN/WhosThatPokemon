@@ -77,6 +77,7 @@ const pokemon = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon',
   'Palossand', 'Pyukumuku', 'Type: Null', 'Silvally', 'Minior', 'Komala', 'Turtonator', 'Togedemaru', 'Mimikyu', 'Bruxish', 'Drampa',
   'Dhelmise', 'Jangmo-o', 'Hakamo-o', 'Kommo-o', 'Tapu Koko', 'Tapu Lele', 'Tapu Bulu', 'Tapu Fini', 'Cosmog', 'Cosmoem', 'Solgaleo',
   'Lunala', 'Nihilego', 'Buzzwole', 'Pheromosa', 'Xurkitree', 'Celesteela', 'Kartana', 'Guzzlord', 'Necrozma', 'Magearna', 'Marshadow'];
+const wtpsound = 'assets/mp3/wtpsound.mp3';
 
 getPokeName = (id) => {
   const name = pokemon[id - 1];
@@ -206,6 +207,7 @@ io.on('connection', function (socket) {
 
           io.to(joindata.roomid).emit('user-joined-game', userdata);
           io.to(joindata.roomid).emit('match-data', curmatch);
+          socket.emit('wtp-sound', wtpsound);
 
           socket.on('room-chat-message', function (data) {
             if (curmatch.users.length < 2) {
@@ -268,6 +270,7 @@ io.on('connection', function (socket) {
             matches[joindata.roomid] = newmatch;
             curmatch = newmatch;
             io.to(joindata.roomid).emit('match-data', curmatch);
+            socket.emit('wtp-sound', wtpsound);
           });
         });
 

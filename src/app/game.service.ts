@@ -80,7 +80,7 @@ export class GameService {
     'Lunala', 'Nihilego', 'Buzzwole', 'Pheromosa', 'Xurkitree', 'Celesteela', 'Kartana', 'Guzzlord', 'Necrozma', 'Magearna', 'Marshadow'];
 
   public messagelength = 240;
-  public maxrounds = 20;
+  public maxrounds = 10;
 
   private url = environment.socketURL;
   private socket;
@@ -104,7 +104,7 @@ export class GameService {
   }
 
   public relog() {
-    if (!this.logged) {
+    if (!this.logged || this.room === -1) {
       this.socket.emit('new-user', this.user);
       this.logged = true;
     }
@@ -140,6 +140,15 @@ export class GameService {
       this.socket.on('match-data', (data) => {
         observer.next(data);
       });
+    });
+  };
+
+  public playWTPSoundData = () => {
+    this.socket.on('wtp-sound', (soundurl) => {
+      console.log('Se supone que tengo que reproducir el audio:', soundurl);
+      const audio = document.createElement('audio');
+      audio.src = window.URL.createObjectURL(soundurl);
+      audio.play();
     });
   };
 
