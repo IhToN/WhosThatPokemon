@@ -6,7 +6,7 @@
   </div>
   <div class="row">
     <div class="pokemon col-12 col-md-5 text-center">
-      <div>Ronda: {{matchdata.round}}</div>
+      <div>Ronda: {{matchdata.round}}//{{gameserv.maxrounds}}</div>
       <img class="poke" [ngClass]="{'guess': pokemonfound.pokemon !== matchdata.pokemonid}"
            src="assets/sprites/pokemon/{{matchdata.pokemonid}}.png"/>
     </div>

@@ -147,7 +147,7 @@ export class GameService {
     this.socket.on('wtp-sound', (soundurl) => {
       console.log('Se supone que tengo que reproducir el audio:', soundurl);
       const audio = document.createElement('audio');
-      audio.src = window.URL.createObjectURL(soundurl);
+      audio.src = soundurl;
       audio.play();
     });
   };
