@@ -104,7 +104,7 @@ export class GameService {
   }
 
   public relog() {
-    if (!this.logged || this.room === -1) {
+    if (!this.logged) {
       this.socket.emit('new-user', this.user);
       this.logged = true;
     }
