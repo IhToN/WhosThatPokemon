@@ -320,7 +320,7 @@ function winner(tempuser, roomid, curmatch, pokeid, points = 5) {
   if (tempuser) {
     tempuser.points += points;
   }
-  if (pokeid) {
+  if (pokeid !== curmatch.pokemonid && pokeid === 25) {
     tempuser.pikachus += 1;
   }
   curmatch.round += 1;

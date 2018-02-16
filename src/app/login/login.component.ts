@@ -69,7 +69,9 @@ export class LoginComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     const objDiv = document.getElementById('messages');
-    objDiv.scrollTop = objDiv.scrollHeight;
+    if (objDiv) {
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
   }
 
   login() {
