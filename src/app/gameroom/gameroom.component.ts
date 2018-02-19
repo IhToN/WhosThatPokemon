@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, OnDestroy, OnInit} from '@angular/core';
 import {slideToLeft} from '../../router.animations';
 import {GameService} from '../game.service';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
@@ -10,7 +10,7 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
   animations: [slideToLeft()],
   host: {'[@routerTransition]': ''}
 })
-export class GameroomComponent implements OnInit, AfterViewChecked {
+export class GameroomComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   matchdata = {
     timeCreated: 0,
@@ -26,11 +26,13 @@ export class GameroomComponent implements OnInit, AfterViewChecked {
 
   messages = [];
 
+  subs = [];
+
   constructor(public gameserv: GameService, private router: Router, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
-    this.router.events.subscribe((evt) => {
+    this.subs.push(this.router.events.subscribe((evt) => {
       if (!(evt instanceof NavigationEnd)) {
         return;
       }
@@ -43,13 +45,13 @@ export class GameroomComponent implements OnInit, AfterViewChecked {
           window.clearInterval(scrollToTop);
         }
       }, 16);
-    });
+    }));
 
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
     };
 
-    this.route.params.subscribe(params => {
+    this.subs.push(this.route.params.subscribe(params => {
       this.roomid = params['roomid'];
 
       if (!this.roomid) {
@@ -85,13 +87,17 @@ export class GameroomComponent implements OnInit, AfterViewChecked {
       }
 
       this.joinroom();
-    });
+    }));
 
   }
 
   ngAfterViewChecked(): void {
     const objDiv = document.getElementById('messages');
     objDiv.scrollTop = objDiv.scrollHeight;
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   sendMessage() {

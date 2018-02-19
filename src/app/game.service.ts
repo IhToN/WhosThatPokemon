@@ -145,7 +145,7 @@ export class GameService {
 
   public playOpeningSong = () => {
     this.socket.on('op-song', (soundurl) => {
-      //console.log('Se supone que tengo que reproducir el audio:', soundurl);
+      // console.log('Se supone que tengo que reproducir el audio:', soundurl);
       const audio = document.createElement('audio');
       audio.src = soundurl;
       audio.play();

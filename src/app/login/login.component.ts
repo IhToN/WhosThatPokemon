@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, OnDestroy, OnInit} from '@angular/core';
 import {slideToLeft} from '../../router.animations';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {GameService} from '../game.service';
@@ -16,7 +16,7 @@ const URL = (environment.socketURL ? environment.socketURL : '') + '/upload';
   animations: [slideToLeft()],
   host: {'[@routerTransition]': ''}
 })
-export class LoginComponent implements OnInit, AfterViewChecked {
+export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
   public uploader: FileUploader = new FileUploader({url: URL});
 
   username;
@@ -28,11 +28,13 @@ export class LoginComponent implements OnInit, AfterViewChecked {
   userslist: any;
   messages = [];
 
+  subs = [];
+
   constructor(private router: Router, public gameserv: GameService) {
   }
 
   ngOnInit() {
-    this.router.events.subscribe((evt) => {
+    this.subs.push(this.router.events.subscribe((evt) => {
       if (!(evt instanceof NavigationEnd)) {
         return;
       }
@@ -45,16 +47,16 @@ export class LoginComponent implements OnInit, AfterViewChecked {
           window.clearInterval(scrollToTop);
         }
       }, 16);
-    });
+    }));
 
-    this.gameserv.getUsers().subscribe((userslist) => {
+    this.subs.push(this.gameserv.getUsers().subscribe((userslist) => {
       this.userslist = userslist;
-    });
+    }));
 
-    this.gameserv.getMessages().subscribe((msgdata) => {
+    this.subs.push(this.gameserv.getMessages().subscribe((msgdata) => {
       console.log('mensaje recibido', msgdata);
       this.messages.push(msgdata);
-    });
+    }));
 
     this.gameserv.playOpeningSong();
 
@@ -72,6 +74,10 @@ export class LoginComponent implements OnInit, AfterViewChecked {
     if (objDiv) {
       objDiv.scrollTop = objDiv.scrollHeight;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   login() {
