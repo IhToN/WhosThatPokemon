@@ -9,8 +9,9 @@
       <div class="badge badge-pill orange d-block">Ronda: {{matchdata.round}}/{{gameserv.maxrounds}}</div>
       <img class="poke" [ngClass]="{'guess': pokemonfound.pokemon !== matchdata.pokemonid}"
            src="assets/sprites/pokemon/{{matchdata.pokemonid}}.png"/>
-      <div class="badge badge-pill orange text-uppercase d-block display-3"
-           *ngIf="pokemonfound.pokemon === matchdata.pokemonid && matchdata.pokemonid !== 0">
+      <div class="badge badge-pill orange text-uppercase d-block"
+           *ngIf="pokemonfound.pokemon === matchdata.pokemonid && matchdata.pokemonid !== 0"
+      style="font-size: 1rem;letter-spacing: 2px;">
         {{gameserv.getPokeName(matchdata.pokemonid)}}
       </div>
     </div>
@@ -42,7 +43,7 @@
 <div class="col-12 col-md-6 col-lg-4 mx-auto card card-cascade wider" *ngIf="matchdata.round > gameserv.maxrounds">
   <div class="view gradient-card-header peach-gradient">
     <h2 class="h2-responsive mb-2">Ranking de Usuarios</h2>
-    <p class="">Ronda: {{matchdata.round}}</p>
+    <p class="">Ronda: {{matchdata.round - 1}}/{{matchdata.round - 1}}</p>
   </div>
   <div class="card-body text-center">
     <ol class="card-text col-10 col-offset-1 mr-2 ml-2">

@@ -6,6 +6,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
+var _ = require('lodash');
+
 const pokemon = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon', 'Charizard', 'Squirtle', 'Wartortle',
   'Blastoise', 'Caterpie', 'Metapod', 'Butterfree', 'Weedle', 'Kakuna', 'Beedrill', 'Pidgey', 'Pidgeotto', 'Pidgeot', 'Rattata',
   'Raticate', 'Spearow', 'Fearow', 'Ekans', 'Arbok', 'Pikachu', 'Raichu', 'Sandshrew', 'Sandslash', 'Nidoran♀', 'Nidorina',
@@ -212,6 +214,9 @@ io.on('connection', function (socket) {
           socket.emit('wtp-sound', wtpsound);
 
           socket.on('room-chat-message', function (data) {
+            if (!_.isEqual(curmatch, matches[joindata.roomid])) {
+              curmatch = matches[joindata.roomid];
+            }
             if (curmatch.users.length < 2) {
               io.to(data.room).emit('room-chat-message', {
                 user: {name: 'Sistema', color: 'red'},
