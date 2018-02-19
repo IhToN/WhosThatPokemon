@@ -1,4 +1,4 @@
-<div class="container" *ngIf="this.matchdata.round < gameserv.maxrounds">
+<div class="container" *ngIf="this.matchdata.round <= gameserv.maxrounds">
   <div class="users row">
     <div class="col-4 col-md-3 col-lg-2" *ngFor="let user of matchdata.users"><strong
       [ngStyle]="{'font-weight': 'bold', 'color': user.color}">{{user.name}}</strong>({{user.points}})
@@ -35,7 +35,7 @@
   </div>
 </div>
 
-<div class="col-12 col-md-6 col-lg-4 mx-auto card card-cascade wider" *ngIf="matchdata.round >= gameserv.maxrounds">
+<div class="col-12 col-md-6 col-lg-4 mx-auto card card-cascade wider" *ngIf="matchdata.round > gameserv.maxrounds">
   <div class="view gradient-card-header peach-gradient">
     <h2 class="h2-responsive mb-2">Ranking de Usuarios</h2>
     <p class="">Ronda: {{matchdata.round}}</p>

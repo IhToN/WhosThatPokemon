@@ -68,7 +68,6 @@ export class GameroomComponent implements OnInit, AfterViewChecked, OnDestroy {
       });
       this.gameserv.getPokemonFound().subscribe((pokedata) => {
         this.pokemonfound = pokedata;
-        console.log(this.matchdata.pokemonid, pokedata.pokemon);
         if (this.matchdata.pokemonid === this.pokemonfound.pokemon) {
           this.messages.push({
             user: {name: 'Sistema', color: 'red'},
@@ -88,13 +87,19 @@ export class GameroomComponent implements OnInit, AfterViewChecked, OnDestroy {
       }
 
       this.joinroom();
+
+      if (this.matchdata.round > this.gameserv.maxrounds) {
+        this.gameserv.restartRoom();
+      }
     }));
 
   }
 
   ngAfterViewChecked(): void {
     const objDiv = document.getElementById('messages');
-    objDiv.scrollTop = objDiv.scrollHeight;
+    if (objDiv) {
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
   }
 
   ngOnDestroy() {

@@ -277,7 +277,7 @@ io.on('connection', function (socket) {
         });
 
         socket.on('update-users-list', function () {
-          socket.emit('users-list', userslist)
+          io.emit('users-list', userslist)
         });
 
         /* User Disconnects */
