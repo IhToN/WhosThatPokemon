@@ -6,10 +6,13 @@
   </div>
   <div class="row">
     <div class="pokemon col-12 col-md-5 text-center">
-      <div class="badge badge-pill orange">Ronda: {{matchdata.round}}/{{gameserv.maxrounds}}</div>
+      <div class="badge badge-pill orange d-block">Ronda: {{matchdata.round}}/{{gameserv.maxrounds}}</div>
       <img class="poke" [ngClass]="{'guess': pokemonfound.pokemon !== matchdata.pokemonid}"
            src="assets/sprites/pokemon/{{matchdata.pokemonid}}.png"/>
-      <div class="badge badge-pill orange text-uppercase display-3" *ngIf="pokemonfound.pokemon === matchdata.pokemonid">{{gameserv.getPokeName(matchdata.pokemonid)}}</div>
+      <div class="badge badge-pill orange text-uppercase d-block display-3"
+           *ngIf="pokemonfound.pokemon === matchdata.pokemonid && matchdata.pokemonid !== 0">
+        {{gameserv.getPokeName(matchdata.pokemonid)}}
+      </div>
     </div>
     <div class="chat col-12 col-md-7">
       <div id="messages" class="messages scrollbar scrollbar-juicy-peach mb-3">
