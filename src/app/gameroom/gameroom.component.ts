@@ -60,7 +60,8 @@ export class GameroomComponent implements OnInit, AfterViewChecked, OnDestroy {
 
       this.gameserv.getMatchData().subscribe(data => {
         this.matchdata = data;
-        console.log(this.matchdata);
+        console.log('JSON del Match', this.matchdata);
+        console.log('Nombre del Pokemon', this.gameserv.getPokeName(this.matchdata.pokemonid));
       });
       this.gameserv.getRoomMessages().subscribe((msgdata) => {
         this.messages.push(msgdata);

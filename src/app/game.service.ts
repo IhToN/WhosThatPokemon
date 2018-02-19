@@ -129,7 +129,6 @@ export class GameService {
   public getMessages = () => {
     return Observable.create((observer) => {
       this.socket.on('chat-message', (msgdata) => {
-        console.log(msgdata);
         observer.next(msgdata);
       });
     });
@@ -154,11 +153,15 @@ export class GameService {
 
   public playWTPSound = () => {
     this.socket.on('wtp-sound', (soundurl) => {
-      //console.log('Se supone que tengo que reproducir el audio:', soundurl);
+      // console.log('Se supone que tengo que reproducir el audio:', soundurl);
       const audio = document.createElement('audio');
       audio.src = soundurl;
       audio.play();
     });
+  };
+
+  public updateUserList = () => {
+    this.socket.emit('update-users-list');
   };
 
   public getPokemonFound = () => {
@@ -173,7 +176,6 @@ export class GameService {
   public getRoomMessages = () => {
     return Observable.create((observer) => {
       this.socket.on('room-chat-message', (msgdata) => {
-        console.log(msgdata);
         observer.next(msgdata);
       });
     });

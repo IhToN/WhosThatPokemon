@@ -54,11 +54,11 @@ export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
     }));
 
     this.subs.push(this.gameserv.getMessages().subscribe((msgdata) => {
-      console.log('mensaje recibido', msgdata);
       this.messages.push(msgdata);
     }));
 
     this.gameserv.playOpeningSong();
+    this.gameserv.updateUserList();
 
     if (this.gameserv.user) {
       this.gameserv.relog();

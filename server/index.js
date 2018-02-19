@@ -276,6 +276,10 @@ io.on('connection', function (socket) {
           });
         });
 
+        socket.on('update-users-list', function () {
+          socket.emit('users-list', userslist)
+        });
+
         /* User Disconnects */
         socket.on('disconnect', function () {
           userslist = userslist.filter(user => user.uuid !== userdata.uuid);
