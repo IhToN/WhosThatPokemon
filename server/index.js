@@ -8,7 +8,7 @@ var port = process.env.PORT || 3000;
 
 var _ = require('lodash');
 
-const pokemon = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon', 'Charizard', 'Squirtle', 'Wartortle',
+const allPokemons = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon', 'Charizard', 'Squirtle', 'Wartortle',
   'Blastoise', 'Caterpie', 'Metapod', 'Butterfree', 'Weedle', 'Kakuna', 'Beedrill', 'Pidgey', 'Pidgeotto', 'Pidgeot', 'Rattata',
   'Raticate', 'Spearow', 'Fearow', 'Ekans', 'Arbok', 'Pikachu', 'Raichu', 'Sandshrew', 'Sandslash', 'Nidoran♀', 'Nidorina',
   'Nidoqueen', 'Nidoran♂', 'Nidorino', 'Nidoking', 'Clefairy', 'Clefable', 'Vulpix', 'Ninetales', 'Jigglypuff', 'Wigglytuff',
@@ -83,7 +83,7 @@ const wtpsound = 'assets/mp3/wtpsound.mp3';
 const opsongs = ['assets/mp3/op_theme.mp3', 'assets/mp3/op_bluered.mp3'];
 
 getPokeName = (id) => {
-  const name = pokemon[id - 1];
+  const name = pokemons[id - 1];
   if (!name) {
     throw new Error(`Pokémon with ID '${id}' does not exist.`);
   }
@@ -91,7 +91,7 @@ getPokeName = (id) => {
 };
 
 getPokeId = (name) => {
-  const index = pokemon.findIndex(pokemon => name.toLowerCase() === pokemon.toLowerCase());
+  const index = pokemons.findIndex(pokemon => name.toLowerCase() === pokemon.toLowerCase());
   if (index === -1) {
     throw new Error(`Pokémon with name '${name}' does not exist.`);
   }
@@ -305,7 +305,7 @@ io.on('connection', function (socket) {
 });
 
 function choosePokemon() {
-  return Math.floor(Math.random() * pokemon.length) + 1;
+  return Math.floor(Math.random() * pokemons.length) + 1;
 }
 
 function getUserInMatch(user, match) {
@@ -344,6 +344,64 @@ function winner(tempuser, roomid, curmatch, pokeid, points = 5) {
 
 function getRandOpSong() {
   return opsongs[Math.floor(Math.random() * opsongs.length)];
+}
+
+/* MongoDB */
+const mongoose = require('mongoose');
+const dbURI = 'mongodb://atalgaba:atalgaba@whosthatpokemon-shard-00-00-zopv9.mongodb.net:27017,whosthatpokemon-shard-00-01-zopv9.mongodb.net:27017,whosthatpokemon-shard-00-02-zopv9.mongodb.net:27017/test?ssl=true&replicaSet=WhosThatPokemon-shard-0&authSource=admin';
+
+const Schema = mongoose.Schema;
+
+const refreshPokemons = false;
+const Pokemon = mongoose.model('Pokemon', new Schema({
+  id: Number,
+  name: String,
+  generation: {type: Number, default: 1}
+}, {retainKeyOrder: true}));
+
+mongoose.connect(dbURI);
+mongoose.connection.on('connected', function () {
+  console.log('Mongoose default connection open to ' + dbURI);
+
+  mongoose.connection.db.collection('pokemons').count(function (err, count) {
+    if (count === 0) {
+      console.log("No pokemons found.");
+      fillPokemonsCollection();
+    }
+    else {
+      console.log("Pokemons found:", count);
+      if (refreshPokemons) {
+        mongoose.connection.db.collection('pokemons').remove({});
+        fillPokemonsCollection();
+      }
+    }
+    loadPokemons(-1);
+  });
+});
+
+function fillPokemonsCollection() {
+  let gen = 1;
+  for (let i = 0; i < pokemons.length; i++) {
+    if (i === 151) {
+      gen = 2;
+    } else if (i === 251) {
+      gen = 3
+    } else if (i === 386) {
+      gen = 4
+    } else if (i === 493) {
+      gen = 5;
+    } else if (i === 649) {
+      gen = 6;
+    } else if (i === 721) {
+      gen = 7;
+    }
+    const newpok = new Pokemon({id: i + 1, name: pokemons[i], generation: gen});
+    newpok.save().then(/*() => console.log('Pokemon guardado:', newpok)*/);
+  }
+}
+
+function loadPokemons(generation = -1) {
+
 }
 
 http.listen(port, function () {
