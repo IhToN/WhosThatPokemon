@@ -1,12 +1,28 @@
-var express = require('express');
-var path = require('path');
-var formidable = require("formidable");
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var port = process.env.PORT || 3000;
+const path = require('path');
+var bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+const port = process.env.PORT || 3000;
+const _ = require('lodash');
 
-var _ = require('lodash');
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+// parse incoming requests
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+const routes = require('./Routes');
+app.use('/', routes);
 
 const allPokemons = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmeleon', 'Charizard', 'Squirtle', 'Wartortle',
   'Blastoise', 'Caterpie', 'Metapod', 'Butterfree', 'Weedle', 'Kakuna', 'Beedrill', 'Pidgey', 'Pidgeotto', 'Pidgeot', 'Rattata',
@@ -99,40 +115,6 @@ getPokeId = (name) => {
   }
   return index + 1;
 };
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('*', function (req, res) {
-  res.sendfile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
-app.post('/upload', function (req, res) {
-  let form = new formidable.IncomingForm();
-
-
-  form.parse(req);
-
-  form.on('fileBegin', function (name, file) {
-    var fileType = file.type.split('/').pop();
-    if (fileType === 'jpg' || fileType === 'png' || fileType === 'jpeg' || fileType === 'gif') {
-      file.path = path.join(__dirname, 'public', 'uploads', file.name);
-
-      form.on('file', function (name, file) {
-        console.log('Uploaded ' + file.name);
-      });
-    } else {
-      res.end();
-    }
-  });
-});
 
 
 var userslist = [];
@@ -355,33 +337,18 @@ const dbURI = 'mongodb://atalgaba:atalgaba@whosthatpokemon-shard-00-00-zopv9.mon
 const Schema = mongoose.Schema;
 
 const refreshPokemons = false;
-const Pokemon = mongoose.model('Pokemon', new Schema({
-  id: {type: Number, required: true, unique: true},
-  name: {type: String, required: true, unique: true},
-  generation: {type: Number, default: 1, required: true,}
-}, {retainKeyOrder: true}));
-/*
-    uuid: '0000-0000-0000',
-    name: 'Username',
-    password: 'asdoijawdoijawd'
-    color: '#FFFFFF',
-    avatar: 'http://...',
-    wins: 0
- */
-const User = mongoose.model('User', new Schema({
-  uuid: {type: String, required: true, unique: true},
-  name: {type: String, required: true},
-  password: {type: String, required: true},
-  color: {type: String, required: true},
-  avatar: {type: String, required: true},
-  wins: Number
-}, {retainKeyOrder: true}));
+
+const Pokemon = require('./models/Pokemon');
+const User = require('./models/User');
 
 mongoose.connect(dbURI);
-mongoose.connection.on('connected', function () {
+var dbcon = mongoose.connection;
+
+dbcon.on('error', console.error.bind(console, 'connection error:'));
+dbcon.on('connected', function () {
   console.log('Mongoose default connection open to ' + dbURI);
 
-  mongoose.connection.db.collection('pokemons').count(function (err, count) {
+  dbcon.db.collection('pokemons').count(function (err, count) {
     if (count === 0) {
       console.log("No pokemons found.");
       fillPokemonsCollection();
@@ -389,7 +356,7 @@ mongoose.connection.on('connected', function () {
     else {
       console.log("Pokemons found:", count);
       if (refreshPokemons) {
-        mongoose.connection.db.collection('pokemons').remove({});
+        dbcon.db.collection('pokemons').remove({});
         fillPokemonsCollection();
       }
     }
@@ -419,20 +386,16 @@ function fillPokemonsCollection() {
 }
 
 function loadPokemons(...generations) {
-  if(generations.length <= 0) {
-    generations = [1,2,3,4,5,6,7]
+  if (generations.length <= 0) {
+    generations = [1, 2, 3, 4, 5, 6, 7]
   }
   let cursor = Pokemon.find({generation: generations}).cursor();
-  cursor.on('data', function(pokedata) {
-    pokemons[pokedata.id-1] = pokedata.name;
+  cursor.on('data', function (pokedata) {
+    pokemons[pokedata.id - 1] = pokedata.name;
   });
-  cursor.on('close', function() {
+  cursor.on('close', function () {
     console.log('Pokemons from generations', generations, 'loaded:', pokemons.length);
   });
-}
-
-function loadUser(mongodb, user) {
-  User.findOne({uuid: user.uuid})
 }
 
 http.listen(port, function () {
