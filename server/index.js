@@ -356,9 +356,25 @@ const Schema = mongoose.Schema;
 
 const refreshPokemons = false;
 const Pokemon = mongoose.model('Pokemon', new Schema({
-  id: Number,
-  name: String,
-  generation: {type: Number, default: 1}
+  id: {type: Number, required: true, unique: true},
+  name: {type: String, required: true, unique: true},
+  generation: {type: Number, default: 1, required: true,}
+}, {retainKeyOrder: true}));
+/*
+    uuid: '0000-0000-0000',
+    name: 'Username',
+    password: 'asdoijawdoijawd'
+    color: '#FFFFFF',
+    avatar: 'http://...',
+    wins: 0
+ */
+const User = mongoose.model('User', new Schema({
+  uuid: {type: String, required: true, unique: true},
+  name: {type: String, required: true},
+  password: {type: String, required: true},
+  color: {type: String, required: true},
+  avatar: {type: String, required: true},
+  wins: Number
 }, {retainKeyOrder: true}));
 
 mongoose.connect(dbURI);
@@ -377,7 +393,7 @@ mongoose.connection.on('connected', function () {
         fillPokemonsCollection();
       }
     }
-    loadPokemons(mongoose.connection.db);
+    loadPokemons();
   });
 });
 
@@ -402,7 +418,7 @@ function fillPokemonsCollection() {
   }
 }
 
-function loadPokemons(mongodb, ...generations) {
+function loadPokemons(...generations) {
   if(generations.length <= 0) {
     generations = [1,2,3,4,5,6,7]
   }
@@ -415,6 +431,10 @@ function loadPokemons(mongodb, ...generations) {
   });
 }
 
+function loadUser(mongodb, user) {
+  User.findOne({uuid: user.uuid})
+}
+
 http.listen(port, function () {
-  console.log('listening on *:' + port);
+  console.log('Listening on *:' + port);
 });
