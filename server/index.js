@@ -350,7 +350,7 @@ function getRandOpSong() {
 
 /* MongoDB */
 const mongoose = require('mongoose');
-const dbURI = 'mongodb://atalgaba:atalgaba@whosthatpokemon-shard-00-00-zopv9.mongodb.net:27017,whosthatpokemon-shard-00-01-zopv9.mongodb.net:27017,whosthatpokemon-shard-00-02-zopv9.mongodb.net:27017/test?ssl=true&replicaSet=WhosThatPokemon-shard-0&authSource=admin';
+const dbURI = 'mongodb://atalgaba:atalgaba@whosthatpokemon-shard-00-00-zopv9.mongodb.net:27017,whosthatpokemon-shard-00-01-zopv9.mongodb.net:27017,whosthatpokemon-shard-00-02-zopv9.mongodb.net:27017/whosthatpokemon?ssl=true&replicaSet=WhosThatPokemon-shard-0&authSource=admin';
 
 const Schema = mongoose.Schema;
 
