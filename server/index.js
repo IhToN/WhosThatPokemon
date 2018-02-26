@@ -82,6 +82,8 @@ const allPokemons = ['Bulbasaur', 'Ivysaur', 'Venusaur', 'Charmander', 'Charmele
 const wtpsound = 'assets/mp3/wtpsound.mp3';
 const opsongs = ['assets/mp3/op_theme.mp3', 'assets/mp3/op_bluered.mp3'];
 
+var pokemons = [];
+
 getPokeName = (id) => {
   const name = pokemons[id - 1];
   if (!name) {
@@ -375,13 +377,13 @@ mongoose.connection.on('connected', function () {
         fillPokemonsCollection();
       }
     }
-    loadPokemons(-1);
+    loadPokemons(mongoose.connection.db);
   });
 });
 
 function fillPokemonsCollection() {
   let gen = 1;
-  for (let i = 0; i < pokemons.length; i++) {
+  for (let i = 0; i < allPokemons.length; i++) {
     if (i === 151) {
       gen = 2;
     } else if (i === 251) {
@@ -395,13 +397,22 @@ function fillPokemonsCollection() {
     } else if (i === 721) {
       gen = 7;
     }
-    const newpok = new Pokemon({id: i + 1, name: pokemons[i], generation: gen});
+    const newpok = new Pokemon({id: i + 1, name: allPokemons[i], generation: gen});
     newpok.save().then(/*() => console.log('Pokemon guardado:', newpok)*/);
   }
 }
 
-function loadPokemons(generation = -1) {
-
+function loadPokemons(mongodb, ...generations) {
+  if(generations.length <= 0) {
+    generations = [1,2,3,4,5,6,7]
+  }
+  let cursor = Pokemon.find({generation: generations}).cursor();
+  cursor.on('data', function(pokedata) {
+    pokemons[pokedata.id-1] = pokedata.name;
+  });
+  cursor.on('close', function() {
+    console.log('Pokemons from generations', generations, 'loaded:', pokemons.length);
+  });
 }
 
 http.listen(port, function () {
