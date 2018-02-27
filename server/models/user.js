@@ -41,8 +41,8 @@ UserSchema.statics.authenticate = function (username, password, callback) {
     });
 };
 
-UserSchema.statics.addWin = function (uuid, callback) {
-  User.findOneAndUpdate({uuid: uuid}, {$inc: {wins: 1}},
+UserSchema.statics.addWin = function (userID, callback) {
+  User.findOneAndUpdate({_id: userID}, {$inc: {wins: 1}},
     function (err, user) {
       if (err) {
         return callback(err);

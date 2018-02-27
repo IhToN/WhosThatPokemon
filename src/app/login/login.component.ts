@@ -19,7 +19,12 @@ const URL = (environment.socketURL ? environment.socketURL : '') + '/upload';
 export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
   public uploader: FileUploader = new FileUploader({url: URL});
 
-  username;
+  log_username;
+  log_password;
+  reg_username;
+  reg_password;
+  reg_password2;
+  reg_color = '#' + (Math.random() * 0xFFFFFF << 0).toString(16);
   avatarid = 0;
   message = '';
 
@@ -67,6 +72,12 @@ export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (this.gameserv.room >= 0) {
       this.gameserv.leaveRoom();
     }
+    $(function () {
+      $('#reg-color').colorpicker({
+        format: 'hex',
+        useAlpha: false
+      });
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -81,7 +92,7 @@ export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   login() {
-    if (!this.username) {
+    if (!this.reg_username) {
       console.log('You have to select a username.');
       return;
     }
@@ -96,7 +107,7 @@ export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
         return;
       }
     }
-    this.gameserv.login(this.username, avatar);
+    this.gameserv.login(this.reg_username, this.reg_color, avatar);
   }
 
   sendMessage() {

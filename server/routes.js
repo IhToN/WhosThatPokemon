@@ -4,8 +4,8 @@ const router = express.Router();
 const formidable = require("formidable");
 
 
-const Pokemon = require('./models/Pokemon');
-const User = require('./models/User');
+const Pokemon = require('./models/pokemon');
+const User = require('./models/user');
 
 router.get('*', function (req, res) {
   res.sendfile(path.join(__dirname, 'public', 'index.html'));
@@ -76,8 +76,8 @@ router.post('/register', function (req, res) {
 );
 
 router.post('/login', function (req, res) {
-  if (req.body.logemail && req.body.logpassword) {
-    User.authenticate(req.body.logemail, req.body.logpassword, function (error, user) {
+  if (req.body.name && req.body.password) {
+    User.authenticate(req.body.name, req.body.password, function (error, user) {
       if (error || !user) {
         let err = new Error('La combinación de usuario y contraseña no se ha podido encontrar.');
         err.status = 401;
@@ -95,8 +95,8 @@ router.post('/login', function (req, res) {
 });
 
 router.post('/userwon', function (req, res) {
-  if (req.body.uuid) {
-    User.addWin(req.body.uuid, function (err) {
+  if (req.session.userId) {
+    User.addWin(req.session.userId, function (err) {
       if (err) {
         return next(err);
       } else {
@@ -104,7 +104,7 @@ router.post('/userwon', function (req, res) {
       }
     });
   } else {
-    let err = new Error('No has introducido una UUID.');
+    let err = new Error('No estás conectado con un usuario válido.');
     err.status = 400;
     return next(err);
   }
