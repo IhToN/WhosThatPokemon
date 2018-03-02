@@ -3,7 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
 
 
-passport.use(new LocalStrategy(User.authenticate));
+passport.use(new LocalStrategy({usernameField: 'name', passwordField: 'password'}, User.authenticate));
 
 
 var sendJSONresponse = function (res, status, content) {
@@ -61,9 +61,7 @@ function login(req, res, next) {
   passport.authenticate('local', function (error, user) {
     if (error || !user) {
       sendJSONresponse(res, 401, {
-        error: 'La combinación de usuario y contraseña no se ha podido encontrar.',
-        err: error,
-        usr: user
+        error: 'La combinación de usuario y contraseña no se ha podido encontrar.'
       });
     } else {
       sendJSONresponse(res, 200, {

@@ -27,21 +27,16 @@ UserSchema.statics.authenticate = function (username, password, next) {
   User.findOne({name: username})
     .exec(function (err, user) {
       if (err) {
-        console.log('ojo, error:', err);
         return next(err);
       } else if (!user) {
-        console.log('usuario no encontrado');
         err = new Error('Usuario no encontrado');
         err.status = 401;
         return next(err);
       } else {
-        console.log('a mirar pass');
         bcrypt.compare(password, user.password, function (err, result) {
           if (result === true) {
-            console.log('ole usuario ahí gúeno');
             return next(null, user);
           } else {
-            console.log('usuario encontrado pero no la contraseña');
             return next();
           }
         });
