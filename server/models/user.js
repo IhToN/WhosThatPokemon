@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const jwte = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 /*
@@ -17,24 +18,31 @@ const UserSchema = new mongoose.Schema({
   // passwordConf: {type: String, required: true},
   color: {type: String, required: true, trim: true},
   avatar: {type: String, required: true, trim: true},
+  is_admin: {type: Boolean, required: true, trim: true},
   wins: Number
 }, {retainKeyOrder: true});
 
-UserSchema.statics.authenticate = function (username, password, callback) {
+UserSchema.statics.authenticate = function (username, password, next) {
+  console.log('autentificando...');
   User.findOne({name: username})
     .exec(function (err, user) {
       if (err) {
-        return callback(err);
+        console.log('ojo, error:', err);
+        return next(err);
       } else if (!user) {
+        console.log('usuario no encontrado');
         err = new Error('Usuario no encontrado');
         err.status = 401;
-        return callback(err);
+        return next(err);
       } else {
+        console.log('a mirar pass');
         bcrypt.compare(password, user.password, function (err, result) {
           if (result === true) {
-            return callback(null, user);
+            console.log('ole usuario ahí gúeno');
+            return next(null, user);
           } else {
-            return callback();
+            console.log('usuario encontrado pero no la contraseña');
+            return next();
           }
         });
       }
@@ -67,6 +75,22 @@ UserSchema.pre('save', function (next) {
     next();
   })
 });
+
+UserSchema.methods.generateJwt = function () {
+  var expiry = new Date();
+  expiry.setDate(expiry.getDate() + 7);
+
+  return jwte.sign({
+    _id: this._id,
+    uuid: this.uuid,
+    name: this.name,
+    color: this.color,
+    avatar: this.avatar,
+    is_admin: this.is_admin,
+    wins: this.wins,
+    exp: parseInt(expiry.getTime() / 1000),
+  }, "wtp_jwt"); // DO NOT KEEP YOUR SECRET IN THE CODE!
+};
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

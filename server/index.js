@@ -1,5 +1,6 @@
+const bodyParser = require('body-parser');
+const passport = require('passport');
 const path = require('path');
-var bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 const http = require('http').Server(app);
@@ -7,6 +8,14 @@ const io = require('socket.io')(http);
 const port = process.env.PORT || 3000;
 const _ = require('lodash');
 const config = require('./config');
+
+
+// parse incoming requests
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -17,10 +26,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
-// parse incoming requests
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 const routes = require('./routes');
 app.use('/', routes);
