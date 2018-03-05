@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import * as io from 'socket.io-client';
+import * as jwt_decode from 'jwt-decode';
 import {v4 as uuid} from 'uuid';
-import {SessionStorage} from 'ngx-webstorage';
+import {LocalStorage, SessionStorage} from 'ngx-webstorage';
 import {environment} from '../environments/environment';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class GameService {
@@ -85,28 +87,80 @@ export class GameService {
   private url = environment.socketURL;
   private socket;
 
-  @SessionStorage()
+  @LocalStorage()
+  public jwt;
+
   public user;
+
+  erin = {error: false, message: ''};
+  erup = {error: false, message: ''};
   logged = false;
 
   public room = -1;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.socket = io(this.url);
   }
 
-  public login(username, color, avatar) {
-    this.user = {
+  private jwtToUser() {
+    if (this.jwt) {
+      const jwt_data = jwt_decode(this.jwt);
+      console.log(jwt_data);
+      this.user = {
+        uuid: jwt_data.uuid,
+        name: jwt_data.name,
+        color: jwt_data.color,
+        avatar: jwt_data.avatar,
+        wins: jwt_data.wins
+      };
+    }
+  }
+
+  public login(username, password) {
+    this.http.post(this.url + '/login', {name: username, password: password}).subscribe(data => {
+      this.erin.error = false;
+      this.erin.message = '';
+
+      this.jwt = data['token'];
+
+      this.relog();
+    }, http_error => {
+      console.log(http_error);
+      this.erin.error = true;
+      if (http_error.error.error) {
+        this.erin.message = http_error.error.error;
+      }
+    });
+  }
+
+  public register(username, password, passwordconf, color, avatar) {
+    this.http.post(this.url + '/register', {
       uuid: uuid(),
       name: username,
+      password: password,
+      passwordConf: passwordconf,
       color: color,
       avatar: avatar
-    };
-    this.relog();
+    }).subscribe(data => {
+      console.log(data);
+      this.erup.error = false;
+      this.erup.message = '';
+
+      this.jwt = data['token'];
+
+      this.relog();
+    }, http_error => {
+      console.log(http_error);
+      this.erup.error = true;
+      if (http_error.error.error) {
+        this.erup.message = http_error.error.error;
+      }
+    });
   }
 
   public relog() {
     if (!this.logged) {
+      this.jwtToUser();
       this.socket.emit('new-user', this.user);
       this.logged = true;
     }

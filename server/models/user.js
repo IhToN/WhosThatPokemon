@@ -23,7 +23,6 @@ const UserSchema = new mongoose.Schema({
 }, {retainKeyOrder: true});
 
 UserSchema.statics.authenticate = function (username, password, next) {
-  console.log('autentificando...');
   User.findOne({name: username})
     .exec(function (err, user) {
       if (err) {

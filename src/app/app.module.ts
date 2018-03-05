@@ -14,6 +14,7 @@ import {GameroomComponent} from './gameroom/gameroom.component';
 import {FileUploadModule} from 'ng2-file-upload';
 import { IngamePipe } from './pipes/ingame.pipe';
 import { OrderPipe } from './pipes/order.pipe';
+import {HttpClientModule} from '@angular/common/http';
 
 const routes: Routes = [
   // La ruta '' indica la ruta por defecto (antiguo index.html)
@@ -39,6 +40,7 @@ const routes: Routes = [
     BrowserAnimationsModule,
     FileUploadModule,
     FormsModule,
+    HttpClientModule,
     RouterModule.forRoot(routes)
   ],
   providers: [GameService],

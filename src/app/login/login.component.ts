@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.gameserv.playOpeningSong();
     this.gameserv.updateUserList();
 
-    if (this.gameserv.user) {
+    if (this.gameserv.jwt) {
       this.gameserv.relog();
     }
 
@@ -92,22 +92,31 @@ export class LoginComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   login() {
-    if (!this.reg_username) {
-      console.log('You have to select a username.');
-      return;
+    if (!this.log_username || !this.log_password) {
+      this.gameserv.erin = {error: true, message: 'Debes rellenar todos los campos.'};
+    } else {
+      this.gameserv.login(this.log_username, this.log_password);
     }
+  }
 
-    let avatar = 'assets/sprites/pokemon/' + this.avatarid + '.png';
-    if (this.uploader.getNotUploadedItems().length) {
-      this.uploader.uploadAll();
-      avatar = URL + 's/' + this.uploader.queue[0].file.name;
-      const fileType = avatar.split('.').pop();
-      if (fileType !== 'jpg' && fileType !== 'png' && fileType !== 'jpeg' && fileType !== 'gif') {
-        console.log('Wrong file format, choose another one.');
-        return;
+  register() {
+    if (!this.reg_username) {
+      this.gameserv.erup = {error: true, message: 'Debes rellenar todos los campos.'};
+    } else {
+
+      let avatar = 'assets/sprites/pokemon/' + this.avatarid + '.png';
+      if (this.uploader.getNotUploadedItems().length) {
+        this.uploader.uploadAll();
+        avatar = URL + 's/' + this.uploader.queue[0].file.name;
+        const fileType = avatar.split('.').pop();
+        if (fileType !== 'jpg' && fileType !== 'png' && fileType !== 'jpeg' && fileType !== 'gif') {
+          this.gameserv.erup = {error: true, message: 'Error de formato, la imagen ha de ser JPG, PNG o GIF.'};
+          return;
+        }
       }
+
+      this.gameserv.register(this.reg_username, this.reg_password, this.reg_password2, this.reg_color, avatar);
     }
-    this.gameserv.login(this.reg_username, this.reg_color, avatar);
   }
 
   sendMessage() {

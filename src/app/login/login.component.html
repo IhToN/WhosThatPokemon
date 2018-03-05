@@ -17,10 +17,13 @@
             </div>
 
             <div class="md-form">
-              <input type="text" [(ngModel)]="log_password" (keyup.enter)="login()" id="log-pass" class="form-control"
+              <input type="password" [(ngModel)]="log_password" (keyup.enter)="login()" id="log-pass"
+                     class="form-control"
                      required>
               <label for="log-pass">Contraseña</label>
             </div>
+
+            <div class="text-danger" *ngIf="gameserv.erin.error">{{gameserv.erin.message}}</div>
 
             <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
               Conectarse
@@ -41,12 +44,14 @@
               <label for="reg-user">Nombre de Usuario</label>
             </div>
             <div class="md-form mb-0">
-              <input type="password" [(ngModel)]="reg_password" (keyup.enter)="login()" id="reg-pass" class="form-control"
+              <input type="password" [(ngModel)]="reg_password" (keyup.enter)="login()" id="reg-pass"
+                     class="form-control"
                      required>
               <label for="reg-pass">Contraseña</label>
             </div>
             <div class="md-form">
-              <input type="password" [(ngModel)]="reg_password2" (keyup.enter)="login()" id="reg-pass2" class="form-control"
+              <input type="password" [(ngModel)]="reg_password2" (keyup.enter)="login()" id="reg-pass2"
+                     class="form-control"
                      required>
               <label for="reg-pass2">Repetir Contraseña</label>
             </div>
@@ -77,7 +82,9 @@
               </div>
             </div>
 
-            <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
+            <div class="text-danger" *ngIf="gameserv.erup.error">{{gameserv.erup.message}}</div>
+
+            <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="register()">
               Registrarse
             </button>
 

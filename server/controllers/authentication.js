@@ -27,7 +27,7 @@ function register(req, res) {
         color: req.body.color,
         avatar: req.body.avatar,
         is_admin: false,
-        wins: 1,
+        wins: 0,
       };
 
       //use schema.create to insert data into the db
@@ -46,7 +46,7 @@ function register(req, res) {
         }
       });
     } else {
-      sendJSONresponse(res, 200, {
+      sendJSONresponse(res, 401, {
         "error": "Las contraseñas no son las mismas."
       });
     }
