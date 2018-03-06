@@ -1,38 +1,94 @@
 <div class="container">
   <div class="row" *ngIf="!gameserv.logged">
-    <section class="col-12 col-md-6 mx-auto form-gradient">
-      <div class="card">
-        <div class="header pt-3 peach-gradient">
-          <div class="row d-flex justify-content-center">
-            <h3 class="white-text mb-3 pt-3 font-bold">¡Entrar a jugar!</h3>
+    <section class="col-12 mx-auto form-gradient">
+      <div class="card-deck">
+        <div class="card">
+          <div class="header pt-3 peach-gradient">
+            <div class="row d-flex justify-content-center">
+              <h3 class="white-text mb-3 pt-3 font-bold">¡Conectarse!</h3>
+            </div>
+          </div>
+
+          <div class="card-body mx-4 mt-4">
+            <div class="md-form">
+              <input type="text" [(ngModel)]="log_username" (keyup.enter)="login()" id="log-user" class="form-control"
+                     required>
+              <label for="log-user">Nombre de Usuario</label>
+            </div>
+
+            <div class="md-form">
+              <input type="password" [(ngModel)]="log_password" (keyup.enter)="login()" id="log-pass"
+                     class="form-control"
+                     required>
+              <label for="log-pass">Contraseña</label>
+            </div>
+
+            <div class="text-danger" *ngIf="gameserv.erin.error">{{gameserv.erin.message}}</div>
+
+            <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
+              Conectarse
+            </button>
           </div>
         </div>
-
-        <div class="card-body mx-4 mt-4">
-          <div class="md-form">
-            <input type="text" [(ngModel)]="username" (keyup.enter)="login()" id="form-user" class="form-control"
-                   required>
-            <label for="form-user">Nombre de Usuario</label>
+        <div class="card">
+          <div class="header pt-3 peach-gradient">
+            <div class="row d-flex justify-content-center">
+              <h3 class="white-text mb-3 pt-3 font-bold">¡Registrarse!</h3>
+            </div>
           </div>
 
-          <div class="range-field row">
-            <label for="form-av-range" class="avatar col-12 col-md-4 col-lg-2">
-              <img src="assets/sprites/pokemon/{{avatarid}}.png"/>
-            </label>
-            <input type="range" [(ngModel)]="avatarid" id="form-av-range" class="col-12 col-md-7 col-lg-9 m-0" min="1"
-                   max="{{gameserv.pokemon.length}}"/>
+          <div class="card-body mx-4 mt-4">
+            <div class="md-form mb-0">
+              <input type="text" [(ngModel)]="reg_username" (keyup.enter)="login()" id="reg-user" class="form-control"
+                     required>
+              <label for="reg-user">Nombre de Usuario</label>
+            </div>
+            <div class="md-form mb-0">
+              <input type="password" [(ngModel)]="reg_password" (keyup.enter)="login()" id="reg-pass"
+                     class="form-control"
+                     required>
+              <label for="reg-pass">Contraseña</label>
+            </div>
+            <div class="md-form">
+              <input type="password" [(ngModel)]="reg_password2" (keyup.enter)="login()" id="reg-pass2"
+                     class="form-control"
+                     required>
+              <label for="reg-pass2">Repetir Contraseña</label>
+            </div>
+            <div id="reg-color" class="md-form input-group colorpicker-component px-0">
+              <input type="text" [(ngModel)]="reg_color" (keyup.enter)="login()" class="form-control px-0"
+                     required>
+              <span class="input-group-addon"><i></i></span>
+              <label for="reg-color">Tu color preferido</label>
+            </div>
+
+            <div class="range-field row align-items-center">
+              <label for="form-av-range" class="avatar col-12 col-md-4 col-lg-2">
+                <img src="assets/sprites/pokemon/{{avatarid}}.png"/>
+              </label>
+              <input type="range" [(ngModel)]="avatarid" id="form-av-range" class="col-12 col-md-7 col-lg-9 m-0" min="1"
+                     max="{{gameserv.pokemon.length}}"/>
+            </div>
+
+            <div class="md-form">
+              <div class="file-field">
+                <div class="btn btn-primary btn-sm float-left">
+                  <span>Elegir Archivo</span>
+                  <input type="file" ng2FileSelect [uploader]="uploader">
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" placeholder="O sube tu avatar">
+                </div>
+              </div>
+            </div>
+
+            <div class="text-danger" *ngIf="gameserv.erup.error">{{gameserv.erup.message}}</div>
+
+            <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="register()">
+              Registrarse
+            </button>
+
           </div>
-
-
-          <div class="col-12">
-            <input class="btn blue-gradient btn-block waves-effect waves-light" type="file"
-                   placeholder="O sube tu avatar" ng2FileSelect
-                   [uploader]="uploader">
-          </div>
-
-          <button type="button" class="btn peach-gradient btn-block m-0 waves-effect waves-light" (click)="login()">
-            Conectarse
-          </button>
         </div>
       </div>
     </section>

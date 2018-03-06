@@ -13,3 +13,10 @@
 .user img {
   width: 12%;
 }
+
+.colorpicker-component .input-group-addon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  background-color: transparent;
+}
