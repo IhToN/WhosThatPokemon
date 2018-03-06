@@ -117,7 +117,7 @@ export class GameService {
   }
 
   public login(username, password) {
-    this.http.post(this.url + '/login', {name: username, password: password}).subscribe(data => {
+    this.http.post((this.url ? this.url : '') + '/login', {name: username, password: password}).subscribe(data => {
       this.erin.error = false;
       this.erin.message = '';
 
@@ -134,7 +134,7 @@ export class GameService {
   }
 
   public register(username, password, passwordconf, color, avatar) {
-    this.http.post(this.url + '/register', {
+    this.http.post((this.url ? this.url : '') + '/register', {
       uuid: uuid(),
       name: username,
       password: password,
